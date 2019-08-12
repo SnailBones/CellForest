@@ -15,13 +15,13 @@
 namespace godot
 {
 
-// class Grid : public Reference
-// {
-// 	GODOT_CLASS(Grid, Reference)
-
-class Grid : public Node
+class Grid : public Reference
 {
-	GODOT_CLASS(Grid, Node)
+	GODOT_CLASS(Grid, Reference)
+
+	// class Grid : public Node
+	// {
+	// GODOT_CLASS(Grid, Node)
 
 private:
 	// Cell **grid;
@@ -40,15 +40,15 @@ public:
 
 	// Node init(int w, int h);
 	void init(int w, int h);
-	void imitate(Grid grid);
+	void imitate(Grid *grid);
 
 	void _process(float delta);
 	void setCell(int x, int y, Cell *val);
-	// Cell *grow(int x, int y, float speed, RULES spruce, RULES birch, FIRE fire);
+	Cell *grow(int x, int y, float speed, RULES spruce, RULES birch, FIRE fire);
 	// Cell *grow(int x, int y, float speed);
-	Ref<Cell> grow(int x, int y, float speed);
-	// Cell *flow(int x, int y, float rain);
-	Ref<Cell> flow(int x, int y, float rain);
+	// Ref<Cell> grow(int x, int y, float speed);
+	Cell *flow(int x, int y, float rain, WATER water);
+	// Ref<Cell> flow(int x, int y, float rain);
 	void setCellRef(int x, int y, Ref<Cell> val);
 	Ref<Cell> getCellRef(int x, int y);
 	Ref<Cell> G(godot::Array a);

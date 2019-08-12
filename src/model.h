@@ -21,6 +21,7 @@ private:
 	float speed;
 	Grid last_state;
 	Grid next_state;
+	Grid *const next_state_pointer = &next_state;
 
 public:
 	static void _register_methods();
@@ -38,6 +39,7 @@ public:
 	Grid *getState();
 	void setState(Grid *v);
 	void setCell(int x, int y, Cell *v);
+	Cell *getCell(int x, int y);
 };
 } // namespace godot
 

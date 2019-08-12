@@ -145,7 +145,7 @@ func _input(ev):
 func _ready():
 	# print("ready!")
 	# last_state.init(ROWS, COLUMNS)
-	last_state.setup(ROWS, COLUMNS, hills, hill_height)
+	last_state.setup(ROWS, COLUMNS)
 
 	# print("setup!")
 	next_state.setup(ROWS, COLUMNS)
@@ -297,7 +297,8 @@ func _process(delta):
 		# var rainPort = rain/WATER.wetSeason
 		# VisualServer.set_default_clear_color(Color(.5-rainPort, rainPort/2,rainPort))
 		tick += 1
-		last_state = next_state;
+		# last_state = next_state;
+		last_state.imitate(next_state);
 		# last state should never be changed
 		# PERF_TESTER.start()
 		# print("starting to grow")
@@ -317,7 +318,8 @@ func _process(delta):
 				# updateLife(tree, close)
 		# PERF_TESTER.stop()
 		# ensure that water is effected by both the tree loop and the water loop
-		last_state = next_state;
+		# last_state = next_state;
+		last_state.imitate(next_state)
 		PERF_TESTER.start()
 		for i in range(COLUMNS):
 			for j in range(ROWS):

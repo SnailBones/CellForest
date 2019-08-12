@@ -4,6 +4,7 @@
 #include <iostream> // std::cout
 #include <string>
 #include <algorithm> // std::clamp
+#include <assert.h>  /* assert */
 
 using namespace godot;
 using namespace std;
@@ -21,8 +22,9 @@ void Grid::_register_methods()
 	register_method("S", &Grid::S);
 	register_property<Grid, int>("width", &Grid::width, 40);
 	register_property<Grid, int>("height", &Grid::height, 40);
-	register_method("grow", &Grid::grow);
-	register_method("flow", &Grid::flow);
+	// register_method("grow", &Grid::grow);
+	// register_method("flow", &Grid::flow);
+	register_method("imitate", &Grid::imitate);
 }
 
 Grid::Grid()
@@ -37,28 +39,28 @@ Grid::~Grid()
 	delete[] grid;
 }
 
-RULES SpruceRules;
-RULES BirchRules;
-FIRE FireRules;
-WATER water;
+// RULES SpruceRules;
+// RULES BirchRules;
+// FIRE FireRules;
+// WATER water;
 
 void Grid::_init()
 {
 	// speed = 1;
 
-	SpruceRules.waterToSprout = .3;
-	SpruceRules.waterToGrow = .15;
-	SpruceRules.portionTaken = .1;
-	SpruceRules.spreadMin = .4;
-	SpruceRules.growRate = .06;
-	SpruceRules.burnRate = .4;
+	// SpruceRules.waterToSprout = .3;
+	// SpruceRules.waterToGrow = .15;
+	// SpruceRules.portionTaken = .1;
+	// SpruceRules.spreadMin = .4;
+	// SpruceRules.growRate = .06;
+	// SpruceRules.burnRate = .4;
 
-	BirchRules.waterToSprout = .3;
-	BirchRules.waterToGrow = .3;
-	BirchRules.portionTaken = .1;
-	BirchRules.spreadMin = .06;
-	BirchRules.growRate = .12;
-	BirchRules.burnRate = .4;
+	// BirchRules.waterToSprout = .3;
+	// BirchRules.waterToGrow = .3;
+	// BirchRules.portionTaken = .1;
+	// BirchRules.spreadMin = .06;
+	// BirchRules.growRate = .12;
+	// BirchRules.burnRate = .4;
 }
 // Node Grid::init(int w, int h)
 // {
@@ -95,9 +97,9 @@ void Grid::setup(int w, int h)
 		{
 			grid[x][y] = Cell::_new();
 			grid[x][y]->_init();
-			grid[x][y]->sediment = .5;
-			grid[x][y]->species = 1;
-			grid[x][y]->water = .5;
+			grid[x][y]->sediment = .5f;
+			grid[x][y]->species = 0;
+			grid[x][y]->water = .1f;
 			// 	// Cell *nCell = Cell::_new();
 			// 	// grid[x][y] = *nCell;
 			// 	// setCell(i, j, other.getCell(i, j));
@@ -105,27 +107,45 @@ void Grid::setup(int w, int h)
 	}
 }
 
-void Grid::imitate(Grid other)
+void Grid::imitate(Grid *other)
 {
-	width = other.width;
-	height = other.height;
+	cout << "imitatitng in Grid! \n";
+	width = other->width;
+	height = other->height;
 	grid = new Cell **[width];
 	for (int i = 0; i < width; ++i)
 	{
 		grid[i] = new Cell *[height];
 		for (int j = 0; j < height; ++j)
-			setCell(i, j, other.getCell(i, j));
+		{
+			// cout << "setting cell\n";
+			// setCell(i, j, other.getCell(i, j));
+			// delete grid[i][j]; // Free up previous memory
+			grid[i][j] = Cell::_new(); // crashes without this
+			Cell o_cell = *(other->getCell(i, j));
+			// *grid[i][j].imitate(o_cell);
+			grid[i][j]->imitate(o_cell);
+			// grid[x][y]->sediment = .5f;
+			// grid[x][y]->species = 0;
+			// grid[x][y]->water = .1f;
+			// 	// Cell *nCell = Cell::_new
+		}
 	}
 }
 
 void Grid::setCell(int x, int y, Cell *val)
 {
+	assert(x < width);
+	assert(y < height);
+
 	// *grid[x][y] = *val; // Copying value
 	grid[x][y] = val; // Copying pointer, value is wherever it was made.
 }
 
 Cell *Grid::getCell(int x, int y)
 {
+	assert(x < width);
+	assert(y < height);
 	// Cell *v = &(grid[x][y]); // Return pointer within array
 	Cell *v = grid[x][y]; // Return pointer at value in arary
 	return v;
@@ -155,6 +175,8 @@ Ref<Cell> Grid::getCellRef(int x, int y)
 
 void Grid::lorax(int x, int y)
 {
+	assert(x < width);
+	assert(y < height);
 	Cell v = *grid[x][y];
 	cout << " THE LORAX QUOTH: cell is " << x << " " << y << "\n";
 	cout << " * height is " << v.height << "\n";
@@ -228,9 +250,9 @@ Cell *Grid::getLooping(int x, int y)
 // 	return neighbors;
 // }
 
-// Cell *Grid::grow(int x, int y, float speed, RULES SpruceRules, RULES BirchRules, FIRE FireRules)
+Cell *Grid::grow(int x, int y, float speed, RULES SpruceRules, RULES BirchRules, FIRE FireRules)
 // Cell *Grid::grow(int x, int y, float speed)
-Ref<Cell> Grid::grow(int x, int y, float speed)
+// Ref<Cell> Grid::grow(int x, int y, float speed)
 {
 	Cell me = *(getCell(x, y));
 	// new is not supported, yuck. neither seems ot be the =.
@@ -310,14 +332,14 @@ Ref<Cell> Grid::grow(int x, int y, float speed)
 	// return &nextMe;
 	// Cell c = *v;
 	// float height = c.height;
-	Ref<Cell> vr = Ref<Cell>(nextMe);
-	return vr;
-	// return nextMe;
+	// Ref<Cell> vr = Ref<Cell>(nextMe);
+	// return vr;
+	return nextMe;
 	// Find documentation on Ref and its advantages over a pointer.
 }
 
-Ref<Cell> Grid::flow(int x, int y, float rain)
-// Cell *Grid::flow(int x, int y, float rain, WATER water)
+// Ref<Cell> Grid::flow(int x, int y, float rain)
+Cell *Grid::flow(int x, int y, float rain, WATER water)
 // Cell *Grid::flow(int x, int y, float rain)
 {
 	Cell me = *(getCell(x, y));
@@ -358,7 +380,7 @@ Ref<Cell> Grid::flow(int x, int y, float rain)
 	// 	cout << "final water is" << (*nextMe).water << "\n";
 	// }
 
-	Ref<Cell> vr = Ref<Cell>(nextMe);
-	return vr;
-	// return nextMe;
+	// Ref<Cell> vr = Ref<Cell>(nextMe);
+	// return vr;
+	return nextMe;
 }

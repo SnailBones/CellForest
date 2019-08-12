@@ -165,33 +165,40 @@ func _ready():
 	print("About to resize")
 	model.resize(COLUMNS, ROWS)
 	print("resized")
-	for i in range(-COLUMNS/2, COLUMNS/2):
-		for j in range(-ROWS/2, ROWS/2):
-			# var instance = tree_script.new(i, j)
-			var cell = CELLSCRIPT.new()
+	for x in range(COLUMNS):
+		for y in range(ROWS):
+			var cell = model.getCell(x, y)
 			cell.species = randi() % 3
-			# cell.species = 2
-			# cell.setSpecies(1)
-			# cell.setWater(.5)
-			# print("instance is", instance)
-			# instance.species = randi() % 3
-			# instance.species = 2
-			# instance.species = 0
-			cell.elevation = sin(((float(i)/ROWS)+.25)*PI*2*hills) + sin(((float(j+i)/COLUMNS)+.25)*PI*2*hills) + 1 * hill_height#+ randf()/2
-			# instance.water = instance.elevation/3
 			cell.water = randf()/2
-			# if j == 0:
-			# 	print ("float is ", float(i)/ROWS*PI)
-			# 	print("elevation is ", instance.elevation)
-			# if cell.isATree():
-			if cell.species > 0:
-				cell.height = randf()
-			# instance.species = 2
-			# instance.XPOSITION = i
-			# instance.YPOSITION = j
-			model.setCell(i+COLUMNS/2, j+ROWS/2, cell)
-			# row.append(instance)
-			# instance.my_init_setter(a,b,c,d)
+			cell.elevation = sin(((float(x)/ROWS)+.25)*PI*2*hills) + sin(((float(x+y)/(ROWS+COLUMNS))+.25)*PI*2*hills) + 1 * hill_height
+			# if cell.species > 0:
+				# cell.height = randf()
+			model.setCell(x, y, cell)
+	# var instance = tree_script.new(i, j)
+	# 		var cell = CELLSCRIPT.new()
+	# 		cell.species = randi() % 3
+	# 		# cell.species = 2
+	# 		# cell.setSpecies(1)
+	# 		# cell.setWater(.5)
+	# 		# print("instance is", instance)
+	# 		# instance.species = randi() % 3
+	# 		# instance.species = 2
+	# 		# instance.species = 0
+	# 		cell.elevation = sin(((float(i)/ROWS)+.25)*PI*2*hills) + sin(((float(j+i)/COLUMNS)+.25)*PI*2*hills) + 1 * hill_height#+ randf()/2
+	# 		# instance.water = instance.elevation/3
+	# 		cell.water = randf()/2
+	# 		# if j == 0:
+	# 		# 	print ("float is ", float(i)/ROWS*PI)
+	# 		# 	print("elevation is ", instance.elevation)
+	# 		# if cell.isATree():
+	# 		if cell.species > 0:
+	# 			cell.height = randf()
+	# 		# instance.species = 2
+	# 		# instance.XPOSITION = i
+	# 		# instance.YPOSITION = j
+	# 		model.setCell(i+COLUMNS/2, j+ROWS/2, cell)
+	# 		# row.append(instance)
+	# 		# instance.my_init_setter(a,b,c,d)
 
 	# tree_canvas.tree = cell
 	add_child(tree_painter)
@@ -234,7 +241,7 @@ func _process(delta):
 		PERF_TESTER.start()
 		print("growing")
 		model.growAll()
-		print("flowing")
+		# print("flowing")
 		model.flowAll(rain)
 		PERF_TESTER.stop()
 		print("getting state")
