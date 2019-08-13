@@ -213,109 +213,21 @@ func _ready():
 func _process(delta):
 	if !paused:
 		var rain = getRain(tick)
-		# var rainPort = rain/WATER.wetSeason
-		# VisualServer.set_default_clear_color(Color(.5-rainPort, rainPort/2,rainPort))
 		tick += 1
-		# last_state = next_state;
-		# # last state should never be changed
-		# # PERF_TESTER.start()
-		# for i in range(COLUMNS):
-		# 				# for y in range(trees[0].size()):
-		# 	for j in range(ROWS):
-		# 		var tree = last_state.grow(i, j)
-		# 		next_state.setCell(i,j, tree)
-		# # PERF_TESTER.stop()
-		# # ensure that water is effected by both the tree loop and the water loop
-		# last_state = next_state;
-		# for i in range(COLUMNS):
-		# 	for j in range(ROWS):
-		# 		# var tree = [i, j]
-		# 		# var close = get_adjacent_neighbors(i,j)
-		# 		# meanWater(tree, close, rain)
-		# 		var tree = last_state.flow(i, j, rain)
-		# 		# if (i == 0 and j == 0):
-		# 		# 	print(":  tree water is", tree.water)
-		# 		# 	print(":  rain is", rain)
-
-		# 		next_state.setCell(i,j, tree)
+		# print("growing")
 		PERF_TESTER.start()
-		print("growing")
 		model.growAll()
 		# print("flowing")
 		model.flowAll(rain)
 		PERF_TESTER.stop()
-		print("getting state")
-		var state = model.getState()
-		print("about to viz")
-		tree_painter.visualize(state)
+		# print("getting state")
+		# print("about to viz")
+		tree_painter.visualize(model.getState())
 		DEBUG_WATER = 0
 		DEBUG_NEG_WATER = 0
 		DEBUG_MAX_WATER = 0
 		DEBUG_ELEVATION = 0
 
-func tryToGrowFarm(tree, s = FARM):
-	if tree.water > s.waterToLive:
-		tree.height -= s.growRate;
-		if tree.height <= 0:
-			tree.die();
-			# if grow == true && (tree.height >= s.maxSize || sum < FARM.treesToGrow):
-			# 	grow = false;
-	elif tree.height < 1:
-		tree.height += s.growRate * growConstant;
-	# tree.water -= tree.height * s.waterConsumption + s.waterConsumption/2
-	# if tree.water <= 0:
-	# 	# tree.die()
-	# 	tree.water = 0
-	if tree.height <= 0:
-		tree.die();
-
-
-	# elif tree.water >= s.waterToGrow:
-	# 	var gAmount = min(tree.water-s.waterToGrow, s.growRate)* growConstant #delta;
-	# 	# if tree.water >= gAmount:
-	# 	tree.height += gAmount
-	# 	tree.water -= gAmount
-	# tree.water -= tree.height * s.waterToLive #waterFromLiving
-	# # tree.stress = sum/s.crowdDie
-	# tree.stress = 1-s.waterToLive-tree.water
-func tryToGrow(tree, s):
-	if tree.on_fire:
-		tree.height -= s.burnRate
-		# if randf() < FIRE.extinguishChance:
-			# tree.on_fire = false;
-		if tree.height <= 0:
-			# no idea why i need this but i do or else it bugs with negative heigts
-			# tree.height = 0
-			tree.die();
-			return
-	else:
-		if !tree.isATree():
-			# tryToGrowFarm(tree)
-			print("BARF! I'm a farm! Go Reneable FARMS!")
-		else:
-			# if tree.water < s.waterToLive:
-			if tree.water < s.waterToLive:
-				# should big trees be easier to kill?
-				# maybe big trees should need more water to grow
-				tree.die();
-				return
-			tree.water -= tree.height * s.waterToLive * s.portionTaken
-			# big trees do consume more water
-			# a bug could be introduced here if trees have a height greater than one
-			if tree.water >= s.waterToGrow:
-				# grow with water OVER limit
-				var gAmount = min(tree.water-s.waterToGrow, s.growRate)* growConstant # delta
-				# var gAmount = min(s.waterToGrow, s.growRate)* growConstant
-				#delta;
-				# if tree.water >= gAmount:
-				tree.height += gAmount
-				# if (tree.height < 0 or gAmount < 0):
-				# 	print("Negative height is", tree.height)
-				# 	print("growing by ", gAmount)
-				# 	print("water is", tree.water)
-				tree.water -= gAmount * s.portionTaken
-			# tree.stress = sum/s.crowdDie
-			tree.stress = 1-s.waterToLive-tree.water
 func loraxIpsum(tree, message):
 	#He speaks through the trees. Well, one tree in particular.
 	# if (tree == [4,4]):
@@ -338,27 +250,27 @@ func loopMe(x, y):
 
 
 	# add diagonal neighbors
-func get_looping_neighbors(x, y):
-	var neighbors = []
-	neighbors.append(loopMe(x-1, y-1))
-	# neighbors.append(loopMe(x-1, y))
-	neighbors.append(loopMe(x-1, y+1))
-	# neighbors.append(loopMe(x, y-1))
-	# neighbors.append(loopMe(x, y))
-	# neighbors.append(loopMe(x, y+1))
-	neighbors.append(loopMe(x+1, y-1))
-	# neighbors.append(loopMe(x+1, y))
-	neighbors.append(loopMe(x+1, y+1))
-	return neighbors
+# func get_looping_neighbors(x, y):
+# 	var neighbors = []
+# 	neighbors.append(loopMe(x-1, y-1))
+# 	# neighbors.append(loopMe(x-1, y))
+# 	neighbors.append(loopMe(x-1, y+1))
+# 	# neighbors.append(loopMe(x, y-1))
+# 	# neighbors.append(loopMe(x, y))
+# 	# neighbors.append(loopMe(x, y+1))
+# 	neighbors.append(loopMe(x+1, y-1))
+# 	# neighbors.append(loopMe(x+1, y))
+# 	neighbors.append(loopMe(x+1, y+1))
+# 	return neighbors
 
-# rectangular neighbors
-func get_adjacent_neighbors(x, y):
-	var neighbors = []
-	neighbors.append(loopMe(x-1, y))
-	neighbors.append(loopMe(x, y-1))
-	neighbors.append(loopMe(x, y+1))
-	neighbors.append(loopMe(x+1, y))
-	return neighbors
+# # rectangular neighbors
+# func get_adjacent_neighbors(x, y):
+# 	var neighbors = []
+# 	neighbors.append(loopMe(x-1, y))
+# 	neighbors.append(loopMe(x, y-1))
+# 	neighbors.append(loopMe(x, y+1))
+# 	neighbors.append(loopMe(x+1, y))
+# 	return neighbors
 
 func handleMouse(mouse_p, speed):
 	var reach = speed/400
@@ -366,14 +278,14 @@ func handleMouse(mouse_p, speed):
 	var x = inWorld.x
 	var y = inWorld.y
 	# for i in range(max(i-reach, 0), min(i+reach, state.height)):
-	# for i in range(x-reach, x+reach):
-	# 	for j in range(y-reach, y+ reach):
-	# 		var distance = (inWorld-Vector2(i, j)).length_squared()
-	# 		if (distance <= reach*reach):
-	# 			var cell = model.next_state.getLooping(i, j);
-	# 			if cell.isATree():
-	# 				cell.on_fire = true;
-	# 				# print("cell height is", cell.height)
-	# 				# print("i is ", i, " j is,", j)
-	# 				model.next_state.setCell(i, j, cell)
-	# 				# last_state.setCell(i, j, cell)
+	for i in range(x-reach, x+reach):
+		for j in range(y-reach, y+ reach):
+			var distance = (inWorld-Vector2(i, j)).length_squared()
+			if (distance <= reach*reach):
+				var cell = model.getState().getLooping(i, j);
+				if cell.isATree():
+					cell.on_fire = true;
+					# print("cell height is", cell.height)
+					# print("i is ", i, " j is,", j)
+					# model.setCell(i, j, cell)
+					# last_state.setCell(i, j, cell)

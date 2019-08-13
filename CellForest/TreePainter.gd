@@ -67,9 +67,7 @@ func setLabel(text, color = Color(0.0, 1.0, 1.0)):
 # 	stress = 0;
 
 func visualize(trees):
-	print("in tree painter! setting state to trees")
 	state = trees;
-	print("state is", trees)
 	update();
 
 func worldToScreen(i, j):
@@ -82,7 +80,6 @@ func screenToWorld(x, y):
 
 
 func _draw():
-	print("drawing!")
 	if state == null:
 		print("null state")
 		return;
@@ -110,7 +107,6 @@ func _draw():
 			else:
 				print("cell is null")
 	# draw(tree, Vector2(0, 0))
-	print("done drawing!")
 	PERF_TESTER.stop()
 func draw(cell, position):
 	# print ("cell is", cell)

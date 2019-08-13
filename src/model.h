@@ -19,9 +19,12 @@ private:
 	int width;
 	int height;
 	float speed;
-	Grid last_state;
-	Grid next_state;
-	Grid *const next_state_pointer = &next_state;
+	Grid* last_state;
+	Grid* next_state;
+	// Grid state1;
+	// Grid state2;
+	// Two states are swapped between pointers for performance
+	void swapStates();
 
 public:
 	static void _register_methods();
@@ -34,7 +37,9 @@ public:
 	void resize(int w, int h);
 
 	void growAll();
+	void growCell(int x, int y, float speed);
 	void flowAll(float rain);
+	void flowCell(int x, int y, float rain);
 	// Ref<Grid> getState();
 	Grid *getState();
 	void setState(Grid *v);

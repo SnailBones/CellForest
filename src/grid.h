@@ -40,6 +40,7 @@ public:
 
 	// Node init(int w, int h);
 	void init(int w, int h);
+	void setup(int x, int y);
 	void imitate(Grid *grid);
 
 	void _process(float delta);
@@ -53,7 +54,6 @@ public:
 	Ref<Cell> getCellRef(int x, int y);
 	Ref<Cell> G(godot::Array a);
 	void S(godot::Array a, Cell *val);
-	void setup(int x, int y);
 	Cell *getCell(int x, int y);
 	// Cell *G(Array a);
 	Cell *getLooping(int x, int y);
