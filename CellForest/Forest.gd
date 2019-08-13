@@ -160,10 +160,9 @@ func _ready():
 	# var tree_script = load("Tree.gd")
 	# var tree_script = load("Tree.tscn")
 	# var tree_script = preload("tree.tscn")
-	print("About to make model")
 	model = MODEL.new()
-	print("About to resize")
-	model.resize(COLUMNS, ROWS)
+	print("About to make model")
+	model.resize(COLUMNS, ROWS, SPRUCE, BIRCH, WATER, FIRE)
 	print("resized")
 	for x in range(COLUMNS):
 		for y in range(ROWS):
@@ -216,9 +215,9 @@ func _process(delta):
 		tick += 1
 		# print("growing")
 		PERF_TESTER.start()
-		model.growAll()
+		var a = model.growAll()
 		# print("flowing")
-		model.flowAll(rain)
+		var b = model.flowAll(rain)
 		PERF_TESTER.stop()
 		# print("getting state")
 		# print("about to viz")

@@ -177,7 +177,8 @@ void Model::swapStates()
 	// }
 }
 
-void Model::flowAll(float rain)
+bool Model::flowAll(float rain)
+// void Model::flowAll(float rain)
 {
 	// last_state.imitate(&next_state);
 	swapStates();
@@ -191,9 +192,10 @@ void Model::flowAll(float rain)
 			// growCell(i, j, speed);
 		}
 	}
+	return true;
 }
 
-void Model::growAll()
+bool Model::growAll()
 {
 	swapStates();
 	for (int i = 0; i < width; ++i)
@@ -203,6 +205,7 @@ void Model::growAll()
 			growCell(i, j, speed);
 		}
 	}
+	return true;
 }
 
 Grid *Model::getState()

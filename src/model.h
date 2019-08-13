@@ -36,9 +36,11 @@ public:
 
 	void resize(int w, int h);
 
-	void growAll();
+	// void growAll();
+	bool growAll();
 	void growCell(int x, int y, float speed);
-	void flowAll(float rain);
+	bool flowAll(float rain);
+	// void flowAll(float rain);
 	void flowCell(int x, int y, float rain);
 	// Ref<Grid> getState();
 	Grid *getState();

@@ -26,26 +26,7 @@ var EXAGGERATION = 30; #terrain exageration
 var YGAP = 5
 var XGAP = YGAP*2
 
-# var species = 0
-# var stress = 0
-# var onfire = false
-# var water = .01;
-# var elevation = 0
-# var sediment = 0
-
-# var state: ARRAY2D;
 var state
-# var tree
-# class member variables go here, for example:
-# var a = 2
-# var b = "textvar"
-
-# func _init(x, y):
-# 	var draw_x = x*20
-# 	var draw_y = y*20
-# 	print("init!")
-# 	update()
-	# set_pos(draw_x, draw_y)
 
 
 func setLabel(text, color = Color(0.0, 1.0, 1.0)):
@@ -59,12 +40,6 @@ func setLabel(text, color = Color(0.0, 1.0, 1.0)):
 	# add_color_override("font_color", color)
 	label.text = var2str(text)
 	# label.color = color
-
-# func die():
-# 	height = 0
-# 	onfire = false
-# 	species = 0;
-# 	stress = 0;
 
 func visualize(trees):
 	state = trees;
@@ -84,16 +59,6 @@ func _draw():
 		print("null state")
 		return;
 	PERF_TESTER.start()
-	# print("state.width is", state.width)
-	# print("state.height is", state.height)
-	# var sprite = get_tree().get_nodes_in_group("sprite")[0]
-	# var forest = get_tree().get_nodes_in_group("forest")[0]
-	# sprite.offset = get_viewport().get_mouse_position()
-	# var mouse = get_viewport().get_mouse_position()
-	# var worldPos = (screenToWorld(mouse.x, mouse.y))
-	# sprite.set_global_position(worldToScreen(worldPos.x, worldPos.y))
-	# draw_birch(get_viewport().get_mouse_position()-forest.get_global_position(), 100, Color(0.0, 1.0, 1.0))
-	# draw_birch(get_viewport().get_mouse_position(), 100, Color(1.0, 1.0, 0.0))
 	var cell;
 	for i in range(state.width):
 		for j in range(state.height):
@@ -109,16 +74,6 @@ func _draw():
 	# draw(tree, Vector2(0, 0))
 	PERF_TESTER.stop()
 func draw(cell, position):
-	# print ("cell is", cell)
-	# print("elevation is", cell.elevation)
-	# var label
-	# if get_children().size()== 0:
-	# 	label = Label.new()
-	# 	add_child(label)
-	# else:
-	# 	label = get_children()[0]
-	# label.text = var2str(height)
-	# var gridColor
 	var me = Vector2(0,0 - cell.elevation * EXAGGERATION) + position;
 	# me += position;
 	var color
@@ -142,10 +97,10 @@ func draw(cell, position):
 		green = cell.water
 	else:
 		green = 1-cell.water
-	# var landColor = Color(1-water*2,green*2,(water-.5)*2)
-	# var landColor = Color(sediment*6, 1-(elevation-1)/4, water)
-	# var landColor = Color((elevation-1)/4, 1-sediment*12, water)
-	var landColor = Color(.3, .3, cell.water)
+	# var landColor = Color(1-cell.water*2,green*2,(cell.water-.5)*2)
+	var landColor = Color(cell.sediment*6, 1-(cell.elevation-1)/4, cell.water*4)
+	# var landColor = Color((cell.elevation-1)/4, 1-cell.sediment*12, cell.water)
+	# var landColor = Color(.3, .3, cell.water)
 	# var landColor = Color(elevation/2, 0, 1-elevation/2)
 	# var landColor = Color(sediment*10, 0, 0)
 	draw_grid(me, GRID_HEIGHT, landColor)
@@ -206,7 +161,7 @@ func draw_grid(me, height, color):
 	var right = Vector2(me.x+height, me.y)
 	var top = Vector2(me.x, me.y+height/2)
 	var bottom = Vector2(me.x, me.y-height/2)
-	draw_line(left, top, color, LW)
+	# draw_line(left, top, color, LW)
 	draw_line(top, right, color, LW)
 	# draw_line(right, bottom, color, LW)
 	# draw_line(bottom, left, color, LW)
