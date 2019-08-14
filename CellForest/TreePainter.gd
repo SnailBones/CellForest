@@ -13,8 +13,10 @@ var BACKGROUND = Color("180f16")
 var TRUNK_COLOR = Color(50, 100, 0)
 # var GRID_COLOR = Color(5, 255, 50)
 
-# var XPOSITION
-# var YPOSITION
+# used in coloring
+var spruce
+var birch
+
 
 # var height = 0;
 var GRID_HEIGHT = 8;
@@ -28,6 +30,10 @@ var XGAP = YGAP*2
 
 var state
 
+
+func _init(s, b):
+	spruce = s
+	birch = b
 
 func setLabel(text, color = Color(0.0, 1.0, 1.0)):
 	set("custom_colors/font_color", color)
@@ -81,26 +87,35 @@ func draw(cell, position):
 		color = Color(1.0, 0.0, 1.0)
 		# color = Color(1.0, 1.0, 1.0)
 	else:
-		# TODO: just calculate stress here, i don't need it as a property
-		var stress = cell.stress
+
+		# 1 is water to grow, 0 is waterToLive death
+
 		if cell.species == 1:
+			# var stress = ((1-cell.water)+spruce.waterToLive)/(spruce.waterToGrow)
+			var stress = 1-(cell.water-spruce.waterToLive)/spruce.waterToGrow
+			# var stress = 1-(cell.water-spruce.waterToGrow)/(spruce.waterToLive)
 			# color = Color(0.0, 1-stress/2, stress+.2)
 			color = Color(0.0, stress, 1-stress/2)
 		elif cell.species == 2:
+			var stress = 1-(cell.water-birch.waterToLive)/(birch.waterToGrow)
+			# var stress = 1-(cell.water-birch.waterToGrow)/(birch.waterToLive)
+			# var stress = ((1-cell.water)+birch.waterToLive)/(birch.waterToGrow)
+			# var stress = ((1-cell.water)+birch.waterToLive)*(1-birch.waterToLive)
 			color = Color(stress*2+.2, (1-stress)*2, 0.0)
 		elif cell.species == 3:
 			color = Color(7.0, 7.0, 7.0)
 	# print("stress is", stress)
 	# red to yellow to green
-	var green
-	if cell.water < .5:
-		green = cell.water
-	else:
-		green = 1-cell.water
+	# var green
+	# if cell.water < .5:
+	# 	green = cell.water
+	# else:
+	# 	green = 1-cell.water
 	# var landColor = Color(1-cell.water*2,green*2,(cell.water-.5)*2)
-	var landColor = Color(cell.sediment*6, 1-(cell.elevation-1)/4, cell.water*4)
-	# var landColor = Color((cell.elevation-1)/4, 1-cell.sediment*12, cell.water)
+	# var landColor = Color(cell.sediment*6, 1-(cell.elevation-1)/4, cell.water*4)
+	var landColor = Color((cell.elevation-1)/4, 1-cell.sediment*12, cell.water)
 	# var landColor = Color(.3, .3, cell.water)
+	# var landColor = Color(cell.water-1, .3, cell.water)
 	# var landColor = Color(elevation/2, 0, 1-elevation/2)
 	# var landColor = Color(sediment*10, 0, 0)
 	draw_grid(me, GRID_HEIGHT, landColor)

@@ -26,13 +26,14 @@ export var hill_height = 2
 
 
 
-export(Dictionary) var SPRUCE = {
+export var SPRUCE = {
 	# "crowdGrowUntil": .4,
 	# "crowdDie": .41,
 	"waterToSprout": .3,
-	"waterToGrow": .25,
-	"waterToLive": .1,
-	"portionTaken": .4,
+	"waterToGrow": .15,
+	"waterToLive": .2,
+	# "portionTaken": .8,
+	"portionTaken": .33,
 	# how much of the water to live and grow is consumed
 	"spreadMin": .3,
 	# "spreadMax": .3,
@@ -41,15 +42,16 @@ export(Dictionary) var SPRUCE = {
 	"burnRate": .4,
 }
 export var BIRCH = {
-	"waterToSprout": .3,
-	"waterToGrow": .5,
-	"waterToLive": .2,
-	"portionTaken": .1,
+	"waterToSprout": .4,
+	"waterToGrow": .2,
+	"waterToLive": .25,
+	"portionTaken": .33,
 	# "crowdGrowUntil": .1,
 	# "crowdDie": .15,
 	"spreadMin": .06,
+	# "spreadMin": 10.0,
 	# "spreadMax": .12,
-	"growRate":  .12,
+	"growRate":  .1,
 	"burnRate": .4,
 }
 
@@ -71,17 +73,64 @@ var FARM = {
 }
 
 export var FIRE = {
-	"spreadMinimum": .2,
+	"spreadMin": .2,
 	"extinguishChance": .00,
 	"dryAmount": .3
 }
 
 export var WATER = {
 	# Precipitation follows a sine curve
+	"drySeason": .02,
+	"wetSeason": .025,
+	# "drySeason": .07,
+	# "wetSeason": .09,
+	"seasonLength": 24, # full cycle in simulation steps
+	"evaporation": .01,
+	"diffusion": 2,
+	"runoff": 1, # Relationship between slope and water given away
+	"erosion":.05,
+	"suspended": .2 # Any float, higher numbers mean dirt travels further
+	# var suspended = 0;
+}
+
+
+# C for classic
+
+var C_SPRUCE = {
+	# "crowdGrowUntil": .4,
+	# "crowdDie": .41,
+	"waterToSprout": .15,
+	"waterToGrow": .11,
+	"waterToLive": .1,
+	"spreadMin": .4,
+	# "spreadMax": .3,
+
+	"growRate":  .08,
+	"burnRate": .3,
+}
+var C_BIRCH = {
+	"waterToSprout": .3,
+	"waterToGrow": .21,
+	"waterToLive": .2,
+	# "crowdGrowUntil": .1,
+	# "crowdDie": .15,
+	"spreadMin": .06,
+	# "spreadMax": .12,
+	"growRate":  .12,
+	"burnRate": .3,
+}
+var C_FIRE = {
+	"spreadMinimum": .035,
+	"extinguishChance": .00,
+	"dryAmount": .02
+}
+
+export var C_WATER = {
+	# Precipitation follows a sine curve
 	# "drySeason": 0,
 	# "wetSeason": .1,
-	"drySeason": .005,
-	"wetSeason": .015,
+	"drySeason": .1,
+	"wetSeason": .12,
 	"seasonLength": 24, # full cycle in simulation steps
 	"evaporation": .01,
 	"diffusion": 2,
@@ -116,7 +165,7 @@ export var WATER = {
 # 	# var suspended = 0;
 # }
 
-var growConstant = 1
+export var growSpeed = 1
 
 # var trees = []
 # we do new and then init because
@@ -127,8 +176,8 @@ var model;
 
 # onready var tree_canvas = tree_script.instance()
 
-# This is a placeholder: we don't really need a whole ARRAY, just one!
-onready var tree_painter = TREE_PAINTER.new()
+var tree_painter
+# onready var tree_painter = TREE_PAINTER.new(SPRUCE.waterToLive, BIRCH.waterToLive)
 var paused = false
 var tick = 0;
 
@@ -157,22 +206,26 @@ func _ready():
 
 	PERF_TESTER = PERF_SCRIPT.new();
 
+	tree_painter = TREE_PAINTER.new(SPRUCE, BIRCH)
+
 	# var tree_script = load("Tree.gd")
 	# var tree_script = load("Tree.tscn")
 	# var tree_script = preload("tree.tscn")
 	model = MODEL.new()
 	print("About to make model")
-	model.resize(COLUMNS, ROWS, SPRUCE, BIRCH, WATER, FIRE)
+	model.setup(COLUMNS, ROWS, growSpeed, SPRUCE, BIRCH, WATER, FIRE)
 	print("resized")
 	for x in range(COLUMNS):
 		for y in range(ROWS):
 			var cell = model.getCell(x, y)
 			cell.species = randi() % 3
-			cell.water = randf()/2
+			# cell.species = 1
+			# cell.water = randf()/2
+			cell.water = .5
 			cell.elevation = sin(((float(x)/ROWS)+.25)*PI*2*hills) + sin(((float(x+y)/(ROWS+COLUMNS))+.25)*PI*2*hills) + 1 * hill_height
-			# if cell.species > 0:
-				# cell.height = randf()
-			model.setCell(x, y, cell)
+			if cell.species > 0:
+				cell.height = randf()
+			# model.setCell(x, y, cell)
 	# var instance = tree_script.new(i, j)
 	# 		var cell = CELLSCRIPT.new()
 	# 		cell.species = randi() % 3
@@ -185,7 +238,7 @@ func _ready():
 	# 		# instance.species = 0
 	# 		cell.elevation = sin(((float(i)/ROWS)+.25)*PI*2*hills) + sin(((float(j+i)/COLUMNS)+.25)*PI*2*hills) + 1 * hill_height#+ randf()/2
 	# 		# instance.water = instance.elevation/3
-	# 		cell.water = randf()/2
+			# cell.water = 100
 	# 		# if j == 0:
 	# 		# 	print ("float is ", float(i)/ROWS*PI)
 	# 		# 	print("elevation is ", instance.elevation)

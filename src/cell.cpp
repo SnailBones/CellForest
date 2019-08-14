@@ -132,7 +132,7 @@ void Cell::grow(RULES r, float growSpeed)
 			water -= gAmount * r.portionTaken;
 		}
 		// this doesn't make sense but it looks pretty
-		stress = 1 - r.waterToLive - water;
+		// stress = 1 - r.waterToLive - water;
 	}
 }
 

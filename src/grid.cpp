@@ -183,5 +183,6 @@ void Grid::S(Array a, Cell *val)
 
 Cell *Grid::getLooping(int x, int y)
 {
-	return getCell((x + width) % width, (y + height) % height);
+	// return getCell((x + width) % width, (y + height) % height);
+	return getCell((x % width + width) % width, (y % height + height) % height);
 }

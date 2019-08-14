@@ -34,7 +34,8 @@ public:
 
 	void _init(); // our initializer called by Godot
 
-	void resize(int w, int h);
+	// void setup(int w, int h);
+	void setup(int width, int height, float speed, Dictionary birch, Dictionary spruce, Dictionary water, Dictionary fire);
 
 	// void growAll();
 	bool growAll();
