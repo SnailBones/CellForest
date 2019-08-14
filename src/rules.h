@@ -9,27 +9,24 @@ struct FIRE
 };
 struct WATER
 {
-    // most of these aren't implemented and do nothing
-    float drySeason = .005;
-    float wetSeason = .015;
-    float seasonLength = 24;
+    // float drySeason = .005;
+    // float wetSeason = .015;
+    // float seasonLength = 24;
     float evaporation = .01;
-    // float diffusion = 2;
+    float diffusion = 1;
     float runoff = 1;
     float erosion = .05;
     float suspended = .2;
 };
 struct RULES
 {
-    float burnRate = .4;
-    float waterToLive = .15;
-    float portionTaken = .2;
-    // float grow;
+    float burnRate;
+    float waterToLive;
+    float portionTaken;
     float growRate;
     float waterToGrow;
-    float waterToSprout = .3;
+    float waterToSprout;
     float spreadMin;
-    // float portionTaken;
 };
 
 #endif

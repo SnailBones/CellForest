@@ -4,6 +4,7 @@
 #include <iostream> // std::cout
 #include <string>
 #include <algorithm> // std::clamp, std:min
+#include <assert.h>  /* assert */
 
 using namespace godot;
 using namespace std;
@@ -40,30 +41,13 @@ WATER Water;
 
 void Model::_init()
 {
-	// speed = 1;
-	// width = 40;
-	// height = 40;
-
-	// Spruce.waterToSprout = .3;
-	// Spruce.waterToGrow = .15;
-	// Spruce.portionTaken = .1;
-	// Spruce.spreadMin = .4;
-	// Spruce.growRate = .06;
-	// Spruce.burnRate = .4;
-
-	// Birch.waterToSprout = .3;
-	// Birch.waterToGrow = .3;
-	// Birch.portionTaken = .1;
-	// Birch.spreadMin = .06;
-	// Birch.growRate = .12;
-	// Birch.burnRate = .4;
+	// They need to be defined like this to be passed to GDScript correctly.
+	last_state = Grid::_new();
+	next_state = Grid::_new();
 }
 
 void Model::setup(int w, int h, float s, Dictionary spruce, Dictionary birch, Dictionary water, Dictionary fire)
 {
-	// They need to be defined like this to be passed to GDScript correctly.
-	last_state = Grid::_new();
-	next_state = Grid::_new();
 	width = w;
 	height = h;
 	speed = s;
@@ -88,6 +72,7 @@ void Model::setup(int w, int h, float s, Dictionary spruce, Dictionary birch, Di
 
 
 	Water.evaporation = water["evaporation"];
+	Water.diffusion = water["diffusion"];
 	Water.runoff = water["runoff"];
 	Water.erosion = water["erosion"];
 	Water.suspended = water["suspended"];
@@ -109,7 +94,13 @@ void Model::setup(int w, int h, float s, Dictionary spruce, Dictionary birch, Di
 	cout << "Birch.spreadMin is " << Birch.spreadMin << "\n";
 	cout << "Birch.waterToLive is " << Birch.waterToLive << "\n";
 
+	cout << "Water.diffusion is " << Water.diffusion << "\n";
+	cout << "Water.evaporation is " << Water.evaporation << "\n";
+
 	cout << "all set up! \n";
+
+	assert(Water.diffusion <= 1);
+	assert(Water.evaporation < 1);
 
 	
 }
@@ -123,7 +114,6 @@ void Model::growCell(int x, int y, float speed)
 	Cell *next_me = next_state->getCell(x, y);
 	(*next_me).imitate(*me); 	// Next me is already the right cell, so we don't need to set.
 	Cell *n[8];
-	// TODO: should these return pointers or values?
 	n[0] = last_state->getLooping(x, y + 1);
 	n[1] = last_state->getLooping(x, y - 1);
 	n[2] = last_state->getLooping(x + 1, y);
@@ -132,14 +122,11 @@ void Model::growCell(int x, int y, float speed)
 	n[5] = last_state->getLooping(x - 1, y - 1);
 	n[6] = last_state->getLooping(x + 1, y - 1);
 	n[7] = last_state->getLooping(x - 1, y + 1);
-	// n is an array of pointers
-	// this hella brittle, be careful!
 	double spruce = 0, birch = 0;
 	double farm = 0;
 	double fire = 0;
 	for (int i = 0; i < 8; ++i)
 	{
-		// Cell n = *n[i];
 		if (n[i]->on_fire)
 			fire += n[i]->height / 4;
 		else if (n[i]->species == 1)
@@ -149,12 +136,6 @@ void Model::growCell(int x, int y, float speed)
 		else if (n[i]->species == 1)
 			farm += n[i]->height / 4;
 	}
-	// 	if (x == 0 && y == 0){
-	// 	cout << "spruce is " << spruce << " "<< "spreadmin is " << Spruce.spreadMin << "\n";
-	// 	cout << "birch is " << birch << "\n";
-	// 	cout << "isEmpty is " << me->isEmpty() << "\n";
-	// 	cout << "fire SpreadMin is " << Fire.spreadMin << " spreadMin is " << Fire.spreadMin << "\n";
-	// }
 	if (me->isEmpty() && fire < Fire.spreadMin)
 	{
 		if (birch > Birch.spreadMin && me->water > Birch.waterToSprout)
@@ -200,21 +181,60 @@ void Model::flowCell(int x, int y, float rain)
 
 	float totalWater = me->water;
 	float totalFlow = 0;
+	float water_force = 0;
+	float sediment_in = 0;
+	float sediment_out = 0;
 	for (int i = 0; i < 4; ++i)
 	{
 		totalWater += n[i]->water;
 		float slope = std::clamp((n[i]->elevation - me->elevation) * Water.runoff, -1.0f, 1.0f);
 		if (slope > 0)
 		{
-			totalFlow += n[i]->water * slope;
+			float amt = n[i]->water * slope;
+			totalFlow += amt;
+			water_force += amt;
+			sediment_in += n[i]->sediment * amt;
 		}
 		else
 		{
-			totalFlow += me->water * slope;
+			float amt = me->water * slope;
+			totalFlow += amt;
+			// Let's try half erosion for water draining away
+			water_force -= amt;
+			// This could be optimized
+			sediment_out -= me->sediment * amt;
+
 		}
 	}
-	float flatWater = totalWater / 5;
-	(*next_me).water = std::min(flatWater + totalFlow / 4 + rain, 1.0f);
+	float all_diffusion = totalWater / 5;
+	float diffuse_change = Water.diffusion*(all_diffusion-me->water);
+	// Balancing between flow and diffusion, this ensures we don't
+	// change the water too much in one step and create weird bugs.
+	float flow_change = (1-Water.diffusion)*(totalFlow/4);
+	float water = me->water + diffuse_change + flow_change + rain;
+	if (water > 1)
+		water -= Water.evaporation;
+	next_me->water = water;
+
+	float sed_change = (sediment_in-sediment_out)/4;
+	next_me->sediment += sed_change;
+
+	// Erosion is speed * water amount
+	float erode = Water.erosion * water_force/4;
+	// float sediment;
+	// next_me-> elevation -= erode;
+	next_me->sediment += erode;
+
+
+	// Maximum sediment is based on speed, anything over that is deposited
+	float max_sediment = water_force * Water.suspended;
+	if (next_me->sediment > max_sediment){
+		float deposit = min(next_me->sediment-max_sediment, 1.0f);
+		// next_me->elevation +=deposit;
+		next_me->sediment -= deposit;
+		// next_me->elevation += next_me->sediment-max_sediment;
+		// next_me->sediment = max_sediment;
+	}
 }
 
 void Model::swapStates()
@@ -222,35 +242,23 @@ void Model::swapStates()
 	Grid *saved_state = last_state;
 	last_state = next_state;
 	next_state = saved_state;
-	// if (next_state == &state1){
-	// 	next_state = &state2;
-	// 	last_state = &state1;
-	// }
-	// else {
-	// 	next_state = &state1;
-	// 	last_state = &state2;
-	// }
 }
 
-bool Model::flowAll(float rain)
-// void Model::flowAll(float rain)
+// bool Model::flowAll(float rain)
+void Model::flowAll(float rain)
 {
-	// last_state.imitate(&next_state);
 	swapStates();
 	for (int i = 0; i < width; ++i)
 	{
 		for (int j = 0; j < height; ++j)
 		{
-			// next_state->setCell(i, j, last_state->flow(i, j, rain, Water));
-			// // next_state.setCell(i, j, last_state.flow(i, j, rain));
 			flowCell(i, j, rain);
 			// growCell(i, j, speed);
 		}
 	}
-	return true;
 }
 
-bool Model::growAll()
+void Model::growAll()
 {
 	swapStates();
 	for (int i = 0; i < width; ++i)
@@ -260,7 +268,6 @@ bool Model::growAll()
 			growCell(i, j, speed);
 		}
 	}
-	return true;
 }
 
 Grid *Model::getState()

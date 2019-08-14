@@ -21,9 +21,8 @@ private:
 	float speed;
 	Grid* last_state;
 	Grid* next_state;
-	// Grid state1;
-	// Grid state2;
-	// Two states are swapped between pointers for performance
+	// Two states must be allocated at runtime to prevent crash
+	// States are swapped between pointers for performance
 	void swapStates();
 
 public:
@@ -32,17 +31,17 @@ public:
 	Model();
 	~Model();
 
-	void _init(); // our initializer called by Godot
+	void _init();
 
-	// void setup(int w, int h);
 	void setup(int width, int height, float speed, Dictionary birch, Dictionary spruce, Dictionary water, Dictionary fire);
 
-	// void growAll();
-	bool growAll();
+	void growAll();
+	void flowAll(float rain);
+	// bool growAll();
+	// bool flowAll(float rain);
 	void growCell(int x, int y, float speed);
-	bool flowAll(float rain);
-	// void flowAll(float rain);
 	void flowCell(int x, int y, float rain);
+
 	// Ref<Grid> getState();
 	Grid *getState();
 	void setState(Grid *v);
