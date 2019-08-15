@@ -20,16 +20,11 @@ export var hill_height = 2
 
 
 export var SPRUCE = {
-	# "crowdGrowUntil": .4,
-	# "crowdDie": .41,
 	"waterToSprout": .3,
 	"waterToGrow": .15,
 	"waterToLive": .2,
 	"portionTaken": .25,
-	# "portionTaken": .33,
-	# how much of the water to live and grow is consumed
 	"spreadMin": .5,
-	# "spreadMax": .3,
 
 	"growRate":  .06,
 	"burnRate": .4,
@@ -38,16 +33,12 @@ export var BIRCH = {
 	"waterToSprout": .4,
 	"waterToGrow": .2,
 	"waterToLive": .25,
-	# "portionTaken": .33,
 	"portionTaken": .2,
-	# "crowdGrowUntil": .1,
-	# "crowdDie": .15,
 	"spreadMin": .06,
-	# "spreadMin": 10.0,
-	# "spreadMax": .12,
 	"growRate":  .1,
 	"burnRate": .4,
 }
+
 
 var FARM = {
 	"spreadMin": .2,
@@ -79,14 +70,15 @@ export var WATER = {
 	# "drySeason": .07,
 	# "wetSeason": .09,
 	"seasonLength": 24, # full cycle in simulation steps
-	"evaporation": .02,
+	"evaporation": .1,
 	# "evaporation": 0,
-	"diffusion": .0, # Percentage toward equlibrium with neighbors reached. Must be less than 1.
-	# Higher diffusion means less runoff.
+	"diffusion": .5, # Percentage toward equlibrium with neighbors reached. Must be less than 1.
+	# Higher diffusion means less runoff (and thus erosion).
 	"runoff": 1, # Water's sensitivity to slopes
-	"erosion":.05,
-	"suspended": .2 # Any float, higher numbers mean dirt travels further
-	# var suspended = 0;
+	# "erosion":.5, # erosion and deposition speed. Maximum 1.
+	# "suspended": .5 # Any float, higher numbers mean dirt travels further
+	"erosion":.5, # erosion and deposition speed. Maximum 1.
+	"suspended": .5 # Any float, higher numbers mean dirt travels further
 }
 
 
@@ -179,13 +171,13 @@ func _ready():
 	for x in range(COLUMNS):
 		for y in range(ROWS):
 			var cell = model.getCell(x, y)
-			# cell.species = randi() % 3
-			cell.species = 0
+			cell.species = randi() % 3
+			# cell.species = 0
 			cell.water = randf()/2
-			cell.elevation = sin(((float(x)/ROWS)+.25)*PI*2*hills) + sin(((float(x+y)/(ROWS+COLUMNS))+.25)*PI*2*hills) + 1 * hill_height
+			# cell.elevation = sin(((float(x)/ROWS)+.25)*PI*2*hills) + sin(((float(x+y)/(ROWS+COLUMNS))+.25)*PI*2*hills) + 1 * hill_height
 			if cell.species > 0:
 				cell.height = randf()
-	# 		cell.elevation = sin(((float(i)/ROWS)+.25)*PI*2*hills) + sin(((float(j+i)/COLUMNS)+.25)*PI*2*hills) + 1 * hill_height#+ randf()/2
+			cell.elevation = sin(((float(x)/ROWS)+.25)*PI*2*hills) * hill_height + sin(((float(y)/COLUMNS)+.25)*PI*2*hills) * hill_height#+ randf()/2
 
 	add_child(tree_painter)
 
@@ -197,8 +189,8 @@ func _process(delta):
 		var a = model.growAll()
 		var b = model.flowAll(rain)
 		PERF_TESTER.stop()
-		handleMouse(delta)
 		tree_painter.visualize(model.getState())
+		handleMouse(delta)
 		DEBUG_WATER = 0
 		DEBUG_NEG_WATER = 0
 		DEBUG_MAX_WATER = 0

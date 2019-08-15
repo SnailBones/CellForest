@@ -20,6 +20,7 @@ void Cell::_register_methods()
 	register_property<Cell, float>("water", &Cell::water, 0);
 	register_property<Cell, float>("sediment", &Cell::sediment, 0);
 	register_property<Cell, bool>("on_fire", &Cell::on_fire, false);
+	register_property<Cell, float>("test_var", &Cell::test_var, 0);
 
 }
 
@@ -39,7 +40,7 @@ void Cell::_init()
 	sediment = 0.0f;
 	on_fire = false;
 	elevation = 0.0f;
-	stress = 0.0f;
+	test_var = 0.0f;
 	species = 0;
 }
 
@@ -51,7 +52,7 @@ void Cell::imitate(Cell cell)
 	sediment = cell.sediment;
 	on_fire = cell.on_fire;
 	elevation = cell.elevation;
-	stress = cell.stress;
+	test_var = cell.test_var;
 	species = cell.species;
 }
 
@@ -121,7 +122,6 @@ void Cell::die()
 {
 	species = 0;
 	height = 0.0f;
-	stress = 0.0f;
 	on_fire = false;
-	// Godot::print("im ded X.X");
+	// Godot::print(" another one bites the dust X_X ");
 }

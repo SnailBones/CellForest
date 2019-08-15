@@ -3,20 +3,20 @@
 
 struct FIRE
 {
-    float spreadMin = .2;
+    float spreadMin;
     // "extinguishChance" : .00,
-    float dryAmount = .3;
+    float dryAmount;
 };
 struct WATER
 {
     // float drySeason = .005;
     // float wetSeason = .015;
     // float seasonLength = 24;
-    float evaporation = .01;
-    float diffusion = 1;
-    float runoff = 1;
-    float erosion = .05;
-    float suspended = .2;
+    float evaporation;
+    float diffusion;
+    float runoff;
+    float erosion;
+    float suspended;
 };
 struct RULES
 {

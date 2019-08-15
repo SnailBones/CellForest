@@ -42,6 +42,8 @@ public:
 	void growCell(int x, int y, float speed);
 	void flowCell(int x, int y, float rain);
 
+	void printTotals();
+
 	// Ref<Grid> getState();
 	Grid *getState();
 	void setState(Grid *v);

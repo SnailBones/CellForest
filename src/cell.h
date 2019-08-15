@@ -24,7 +24,7 @@ public:
 	float elevation;
 	float sediment;
 	bool on_fire;
-	float stress; //Just for visualizing
+	float test_var; //Just for visualizing
 
 	static void _register_methods();
 
