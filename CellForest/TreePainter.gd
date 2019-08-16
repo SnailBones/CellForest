@@ -95,13 +95,15 @@ func draw(cell, position):
 			var stress = 1-(cell.water-spruce.waterToLive)/spruce.waterToGrow
 			# var stress = 1-(cell.water-spruce.waterToGrow)/(spruce.waterToLive)
 			# color = Color(0.0, 1-stress/2, stress+.2)
-			color = Color(0.0, stress/2+.5, 1-stress/2)
+			# color = Color(0.0, stress/2+.5, 1-stress/2)
+			# Switching colors
+			color = Color(0.0, 1-stress/2, stress/2+.5)
 		elif cell.species == 2:
 			var stress = 1-(cell.water-birch.waterToLive)/(birch.waterToGrow)
 			# var stress = 1-(cell.water-birch.waterToGrow)/(birch.waterToLive)
 			# var stress = ((1-cell.water)+birch.waterToLive)/(birch.waterToGrow)
 			# var stress = ((1-cell.water)+birch.waterToLive)*(1-birch.waterToLive)
-			color = Color(stress+.2, (1-stress)*2, 0.0)
+			color = Color(stress*.6+.4, (1-stress*.4), 0.0)
 		elif cell.species == 3:
 			color = Color(7.0, 7.0, 7.0)
 	# print("stress is", stress)
@@ -114,7 +116,7 @@ func draw(cell, position):
 	# var landColor = Color(1-cell.water*2,green*2,(cell.water-.5)*2)
 	# var landColor = Color(cell.sediment*6, 1-(cell.elevation-1)/4, cell.water*4)
 	# var landColor = Color((cell.elevation-1)/4, 1-cell.sediment*12, cell.water)
-	var landColor = Color(cell.sediment*6, cell.elevation/8+.5, cell.water)
+	var landColor = Color(cell.sediment*6, cell.elevation/8, cell.water)
 
 	# var landColor = Color(cell.test_var/4, cell.test_var, 1-cell.test_var)
 	# var landColor = Color(cell.test_var*10, -cell.test_var*10, .2)

@@ -27,7 +27,7 @@ export var SPRUCE = {
 	"spreadMin": .5,
 
 	"growRate":  .06,
-	"burnRate": .4,
+	"burnRate": .2,
 }
 export var BIRCH = {
 	"waterToSprout": .4,
@@ -36,7 +36,7 @@ export var BIRCH = {
 	"portionTaken": .2,
 	"spreadMin": .06,
 	"growRate":  .1,
-	"burnRate": .4,
+	"burnRate": .2,
 }
 
 
@@ -58,7 +58,7 @@ var FARM = {
 }
 
 export var FIRE = {
-	"spreadMin": .2,
+	"spreadMin": .1,
 	"extinguishChance": .00,
 	"dryAmount": .3
 }
@@ -172,12 +172,11 @@ func _ready():
 		for y in range(ROWS):
 			var cell = model.getCell(x, y)
 			cell.species = randi() % 3
-			# cell.species = 0
 			cell.water = randf()/2
-			# cell.elevation = sin(((float(x)/ROWS)+.25)*PI*2*hills) + sin(((float(x+y)/(ROWS+COLUMNS))+.25)*PI*2*hills) + 1 * hill_height
 			if cell.species > 0:
 				cell.height = randf()
-			cell.elevation = sin(((float(x)/ROWS)+.25)*PI*2*hills) * hill_height + sin(((float(y)/COLUMNS)+.25)*PI*2*hills) * hill_height#+ randf()/2
+			cell.elevation = sin(((float(x)/ROWS)+.25)*PI*2*hills) + sin(((float(x+y)/(ROWS+COLUMNS))+.25)*PI*2*hills) + 1 * hill_height
+			# cell.elevation = sin(((float(x)/ROWS)+.25)*PI*2*hills) * hill_height + sin(((float(y)/COLUMNS)+.25)*PI*2*hills) * hill_height#+ randf()/2
 
 	add_child(tree_painter)
 
