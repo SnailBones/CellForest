@@ -150,8 +150,9 @@ var DEBUG_NEG_WATER = 0
 var DEBUG_MAX_WATER = 0
 
 func _input(ev):
-	if ev is InputEventKey and ev.scancode == KEY_SPACE and not ev.echo and ev.pressed:
-		paused = !paused
+	if ev is InputEventKey:
+		if ev.scancode == KEY_P and not ev.echo and ev.pressed:
+			paused = !paused
 
 func _ready():
 	# var screen_size = OS.get_screen_size(screen=0)
@@ -175,7 +176,7 @@ func _ready():
 			cell.water = randf()/2
 			if cell.species > 0:
 				cell.height = randf()
-			cell.elevation = sin(((float(x)/ROWS)+.25)*PI*2*hills) + sin(((float(x+y)/(ROWS+COLUMNS))+.25)*PI*2*hills) + 1 * hill_height
+			cell.elevation = sin(((float(x)/ROWS)+.25)*PI*2*hills)* hill_height + sin(((float(x+y)/(ROWS+COLUMNS))+.25)*PI*2*hills) * hill_height
 			# cell.elevation = sin(((float(x)/ROWS)+.25)*PI*2*hills) * hill_height + sin(((float(y)/COLUMNS)+.25)*PI*2*hills) * hill_height#+ randf()/2
 
 	add_child(tree_painter)

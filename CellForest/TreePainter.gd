@@ -22,7 +22,7 @@ var birch
 var GRID_HEIGHT = 8;
 var MAX_HEIGHT = 40;
 # var GROWTH_SPEED = 40;
-var LW = 1 # Line weight
+var LW = 2 # Line weight
 var EXAGGERATION = 30; #terrain exageration
 
 var YGAP = 5
@@ -64,6 +64,7 @@ func _draw():
 	if state == null:
 		print("null state")
 		return;
+	# draw_icon();
 	PERF_TESTER.start()
 	var cell;
 	for i in range(state.width):
@@ -77,7 +78,6 @@ func _draw():
 				draw(cell, position)
 			else:
 				print("cell is null")
-	# draw(tree, Vector2(0, 0))
 	PERF_TESTER.stop()
 func draw(cell, position):
 	var me = Vector2(0,0 - cell.elevation * EXAGGERATION) + position;
@@ -152,7 +152,7 @@ func draw_spruce(me, height, color): #height in pixels
 	var leftCorner = Vector2(x-width, y-trunk_height)
 	var rightCorner = Vector2(x+width, y-trunk_height)
 	var top = Vector2(x, y-height)
-	draw_polygon([leftCorner, rightCorner, top], [BACKGROUND])
+	# draw_polygon([leftCorner, rightCorner, top], [BACKGROUND])
 	draw_line(me,Vector2(x, y-trunk_height), color, LW) #trunk
 	draw_line(leftCorner,top, color, LW)
 	draw_line(rightCorner,top, color, LW)
@@ -168,7 +168,7 @@ func draw_birch(me, height, color): #height in pixels
 	var rightCorner = Vector2(x+width, y-trunk_height)
 	var topLeft = Vector2(x-width, y-height)
 	var topRight = Vector2(x+width, y-height)
-	draw_polygon([leftCorner, rightCorner, topRight, topLeft], [BACKGROUND])
+	# draw_polygon([leftCorner, rightCorner, topRight, topLeft], [BACKGROUND])
 	draw_line(me,Vector2(x, y-trunk_height), color, LW) #trunk
 	draw_line(leftCorner,topLeft, color, LW)
 	draw_line(rightCorner,topRight, color, LW)
@@ -202,3 +202,10 @@ func draw_box(me, size, height, color):
 	draw_line(bottom, Vector2(me.x, me.y+size/2+height), color, LW)
 	draw_line(left, Vector2(me.x-size, me.y+height), color, LW)
 	draw_line(right, Vector2(me.x+size, me.y+height), color, LW)
+
+func draw_icon():
+	var position = worldToScreen(0,0)
+	var stress = .2
+	var color = Color(0.0, 1-stress/2, stress/2+.5)
+	draw_spruce(position, 35, color)
+	draw_grid(position, GRID_HEIGHT, Color(1,.5, 0))
