@@ -30,6 +30,16 @@ var XGAP = YGAP*2
 
 var state
 
+var loop_world = false
+# onready var screen_position = get_global_transform_with_canvas().origin
+
+onready var screen_position = get_global_position()
+# var screen_position = Vector2(0, 0)
+
+# onready var window_size = OS.get_window_size()
+# onready var window_size = get_viewport().size
+# var window_size = Vector2(1024, 600)
+var window_size = Vector2(ProjectSettings.get("display/window/size/width"),ProjectSettings.get("display/window/size/height"))
 
 func _init(s, b):
 	spruce = s
@@ -51,16 +61,34 @@ func visualize(trees):
 	state = trees;
 	update();
 
-func worldToScreen(i, j):
-	return Vector2((i-j)*XGAP,(i+j-state.height/2)*YGAP)
+func worldToScreen(i, j, elevation):
+	return Vector2((i-j)*XGAP,(i+j-state.height/2)*YGAP - elevation * EXAGGERATION)
 
 func screenToWorld(x, y):
 	var i = (x/XGAP +y/YGAP)/2 + state.height/4
 	var j = (y/YGAP - x/XGAP)/2 + state.height/4
 	return Vector2(i, j)
 
+func worldToLoopingScreen(i,j, elevation): # Makes things appear infinite...
+	var all_of_em = [
+		worldToScreen(i, j, elevation),
+		worldToScreen(i,j+state.height, elevation),
+		worldToScreen(i,j-state.height, elevation),
+		worldToScreen(i+state.width,j, elevation),
+		worldToScreen(i-state.width,j, elevation)
+	]
+	var on_screens = []
+	# var margin = -80
+	var margin = -32
+	for new_position in all_of_em:
+		if new_position.x > -screen_position.x-margin and new_position.y > -screen_position.y-margin and (new_position.x < window_size.x+margin - screen_position.x) and (new_position.y < window_size.y + margin - screen_position.y):
+			on_screens.append(new_position)
+	return on_screens
+
 
 func _draw():
+	print ("screen position is", screen_position, "window size is", window_size)
+	# print ("window size is ",  window_size.x, " " , window_size.y)
 	if state == null:
 		print("null state")
 		return;
@@ -69,18 +97,23 @@ func _draw():
 	var cell;
 	for i in range(state.width):
 		for j in range(state.height):
-			var position = worldToScreen(i, j)
+			# var position = worldToScreen(i, j)
 			# print("getting cell", i, j)
 			# state.lorax(i, j)
 			cell = state.getCell(i, j)
 			# print("cell is", cell)
-			if cell != null:
-				draw(cell, position)
+			# if cell != null:
+			var loop;
+			if loop_world:
+				loop = worldToLoopingScreen(i, j, cell.elevation)
 			else:
-				print("cell is null")
+				loop = [worldToScreen(i, j, cell.elevation)]
+			if not loop == []:
+				draw(cell, loop)
+			# else:
+			# 	print("cell is null")
 	PERF_TESTER.stop()
-func draw(cell, position):
-	var me = Vector2(0,0 - cell.elevation * EXAGGERATION) + position;
+func draw(cell, positions):
 	# me += position;
 	var color
 	if cell.on_fire && cell.height > 0:
@@ -124,7 +157,11 @@ func draw(cell, position):
 	# var landColor = Color(cell.water-1, .3, cell.water)
 	# var landColor = Color(elevation/2, 0, 1-elevation/2)
 	# var landColor = Color(sediment*10, 0, 0)
-	draw_grid(me, GRID_HEIGHT, landColor)
+	for position in positions:
+		# print("position is", position)
+		# var me = Vector2(0,-cell.elevation * EXAGGERATION) + position;
+		draw_grid(position, GRID_HEIGHT, landColor)
+	var me = positions[0]
 	# draw_box(me, GRID_HEIGHT, elevation * EXAGGERATION, Color(1-water*2,green*2,(water-.5)*2))
 	# print("me is ", me.y, " height is ", cell.height)
 	if cell.species == 1:
@@ -156,7 +193,24 @@ func draw_spruce(me, height, color): #height in pixels
 	draw_line(me,Vector2(x, y-trunk_height), color, LW) #trunk
 	draw_line(leftCorner,top, color, LW)
 	draw_line(rightCorner,top, color, LW)
-	# draw_line(rightCorner,leftCorner, color, LW)
+	draw_line(rightCorner,leftCorner, color, LW)
+
+# func draw_birch(me, height, color): #height in pixels
+# 	var x = me.x
+# 	var y = me.y
+# 	var trunk_height = .2 * height
+# 	var width = .2 * height
+# 	height = height*.8
+# 	var leftCorner = Vector2(x-width, y-trunk_height)
+# 	var rightCorner = Vector2(x+width, y-trunk_height)
+# 	var topLeft = Vector2(x-width, y-height)
+# 	var topRight = Vector2(x+width, y-height)
+# 	# draw_polygon([leftCorner, rightCorner, topRight, topLeft], [BACKGROUND])
+# 	draw_line(me,Vector2(x, y-trunk_height), color, LW) #trunk
+# 	draw_line(leftCorner,topLeft, color, LW)
+# 	draw_line(rightCorner,topRight, color, LW)
+# 	draw_line(topRight, topLeft, color, LW)
+# 	draw_line(rightCorner,leftCorner, color, LW)
 
 func draw_birch(me, height, color): #height in pixels
 	var x = me.x
@@ -169,10 +223,11 @@ func draw_birch(me, height, color): #height in pixels
 	var topLeft = Vector2(x-width, y-height)
 	var topRight = Vector2(x+width, y-height)
 	# draw_polygon([leftCorner, rightCorner, topRight, topLeft], [BACKGROUND])
-	draw_line(me,Vector2(x, y-trunk_height), color, LW) #trunk
-	draw_line(leftCorner,topLeft, color, LW)
-	draw_line(rightCorner,topRight, color, LW)
-	draw_line(topRight, topLeft, color, LW)
+	draw_line(me,Vector2(x, y-height), color, LW) #trunk
+	draw_line(Vector2(x, y-height*.66), Vector2(x+width, y-height*.8), color, LW)
+	draw_line(Vector2(x, y-height*.33), Vector2(x-height*.3, y-height*.6), color, LW)
+	# draw_line(rightCorner,topRight, color, LW)
+	# draw_line(topRight, topLeft, color, LW)
 	# draw_line(rightCorner,leftCorner, color, LW)
 
 func draw_grid(me, height, color):
@@ -203,9 +258,9 @@ func draw_box(me, size, height, color):
 	draw_line(left, Vector2(me.x-size, me.y+height), color, LW)
 	draw_line(right, Vector2(me.x+size, me.y+height), color, LW)
 
-func draw_icon():
-	var position = worldToScreen(0,0)
-	var stress = .2
-	var color = Color(0.0, 1-stress/2, stress/2+.5)
-	draw_spruce(position, 35, color)
-	draw_grid(position, GRID_HEIGHT, Color(1,.5, 0))
+# func draw_icon():
+# 	var position = worldToScreen(0,0)
+# 	var stress = .2
+# 	var color = Color(0.0, 1-stress/2, stress/2+.5)
+# 	draw_spruce(position, 35, color)
+# 	draw_grid(position, GRID_HEIGHT, Color(1,.5, 0))
