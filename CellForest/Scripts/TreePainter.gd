@@ -1,13 +1,13 @@
 extends Node2D
 
-const ARRAY2D = preload("bin/grid.gdns")
+const ARRAY2D = preload("res://bin/grid.gdns")
 # const ARRAY2D = preload("2dArray.gd")
-const CELLSCRIPT = preload("bin/cell.gdns")
+const CELLSCRIPT = preload("res://bin/cell.gdns")
 
 export(PackedScene) var Text
 
-const PERF_SCRIPT = preload("Measure.gd")
-onready var PERF_TESTER = PERF_SCRIPT.new("Painting")
+# const PERF_SCRIPT = preload("Measure.gd")
+# onready var PERF_TESTER = PERF_SCRIPT.new("Painting")
 
 var BACKGROUND = Color("180f16")
 var TRUNK_COLOR = Color(50, 100, 0)
@@ -23,7 +23,7 @@ var GRID_HEIGHT = 8;
 var MAX_HEIGHT = 40;
 # var GROWTH_SPEED = 40;
 var LW = 2 # Line weight
-var EXAGGERATION = 30; #terrain exageration
+var EXAGGERATION = 15; #terrain exageration
 
 var YGAP = 5
 var XGAP = YGAP*2
@@ -85,35 +85,36 @@ func worldToLoopingScreen(i,j, elevation): # Makes things appear infinite...
 			on_screens.append(new_position)
 	return on_screens
 
+func getNeighborPositions(cell, neighbors):
+	var neighbor1 = Vector2((1)*XGAP,(YGAP) - (neighbors[0].elevation-cell.elevation) * EXAGGERATION)
+	var neighbor2 = Vector2((-1)*XGAP,(YGAP) - (neighbors[1].elevation-cell.elevation) * EXAGGERATION)
+	return [neighbor1, neighbor2]
 
 func _draw():
-	print ("screen position is", screen_position, "window size is", window_size)
-	# print ("window size is ",  window_size.x, " " , window_size.y)
 	if state == null:
-		print("null state")
 		return;
 	# draw_icon();
-	PERF_TESTER.start()
+	# PERF_TESTER.start()
 	var cell;
 	for i in range(state.width):
 		for j in range(state.height):
-			# var position = worldToScreen(i, j)
-			# print("getting cell", i, j)
-			# state.lorax(i, j)
 			cell = state.getCell(i, j)
-			# print("cell is", cell)
-			# if cell != null:
-			var loop;
+			var neighbor1 = state.getLooping(i+1, j)
+			var neighbor2 = state.getLooping(i, j+1)
+			var neighbors
+			var loop
 			if loop_world:
 				loop = worldToLoopingScreen(i, j, cell.elevation)
+				# neighbors = [worldToLoopingScreen(i+1, j, neighbor1.elevation), worldToLoopingScreen(i, j+1, neighbor2.elevation)]
+
 			else:
 				loop = [worldToScreen(i, j, cell.elevation)]
+				#neighbors = [[worldToScreen(i+1, j, neighbor1.elevation)]]
 			if not loop == []:
-				draw(cell, loop)
-			# else:
-			# 	print("cell is null")
-	PERF_TESTER.stop()
-func draw(cell, positions):
+				neighbors = getNeighborPositions(cell, [neighbor1, neighbor2])
+				draw(cell, loop, neighbors)
+	# PERF_TESTER.stop()
+func draw(cell, positions, neighbors):
 	# me += position;
 	var color
 	if cell.on_fire && cell.height > 0:
@@ -157,10 +158,19 @@ func draw(cell, positions):
 	# var landColor = Color(cell.water-1, .3, cell.water)
 	# var landColor = Color(elevation/2, 0, 1-elevation/2)
 	# var landColor = Color(sediment*10, 0, 0)
-	for position in positions:
+	# for position in positions:
+	for i in range(positions.size()):
+		var p = positions[i]
+		#var neighbor_group = neighbors[i]
 		# print("position is", position)
 		# var me = Vector2(0,-cell.elevation * EXAGGERATION) + position;
-		draw_grid(position, GRID_HEIGHT, landColor)
+		# draw_grid(p, GRID_HEIGHT, landColor)
+		# draw_meshy(p, neighbors[i], landColor)
+
+		for neighbor in neighbors: # do this twice
+			draw_line(p, p+neighbor, landColor, LW)
+		# for neighbor in neighbors[1][i]:
+		# 	draw_line(p, neighbor[1][i], color, LW)
 	var me = positions[0]
 	# draw_box(me, GRID_HEIGHT, elevation * EXAGGERATION, Color(1-water*2,green*2,(water-.5)*2))
 	# print("me is ", me.y, " height is ", cell.height)
@@ -241,6 +251,11 @@ func draw_grid(me, height, color):
 	draw_line(top, right, color, LW)
 	# draw_line(right, bottom, color, LW)
 	# draw_line(bottom, left, color, LW)
+
+func draw_meshy(me, neighbors, color):
+	# draw_line(left, top, color, LW)
+	for neighbor in neighbors:
+		draw_line(me, neighbor, color, LW)
 
 func draw_box(me, size, height, color):
 	var x = me.x

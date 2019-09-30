@@ -21,7 +21,6 @@ void Cell::_register_methods()
 	register_property<Cell, float>("sediment", &Cell::sediment, 0);
 	register_property<Cell, bool>("on_fire", &Cell::on_fire, false);
 	register_property<Cell, float>("test_var", &Cell::test_var, 0);
-
 }
 
 Cell::Cell()
@@ -78,7 +77,8 @@ void Cell::growD(Dictionary d, float growSpeed)
 	r.waterToGrow = d["waterToGrow"];
 	grow(r, growSpeed);
 }
-void Cell::grow(RULES r, float growSpeed)
+// Returns growth or -1 for death.
+float Cell::grow(RULES r, float growSpeed)
 {
 	if (on_fire)
 	{
@@ -86,7 +86,7 @@ void Cell::grow(RULES r, float growSpeed)
 		if (height <= 0)
 		{
 			die();
-			return;
+			return -1;
 		}
 	}
 	else
@@ -95,7 +95,7 @@ void Cell::grow(RULES r, float growSpeed)
 		if (water < r.waterToLive)
 		{
 			die();
-			return;
+			return -1;
 		}
 		water -= height * r.waterToLive * r.portionTaken;
 
@@ -106,9 +106,9 @@ void Cell::grow(RULES r, float growSpeed)
 			// float gAmount = std::min(water, r.growRate * growSpeed);
 			height += gAmount;
 			water -= gAmount * r.portionTaken;
+			return gAmount;
 		}
-		// this doesn't make sense but it looks pretty
-		// stress = 1 - r.waterToLive - water;
+		return 0;
 	}
 }
 

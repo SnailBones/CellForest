@@ -16,7 +16,6 @@ class Cell : public Reference
 	GODOT_CLASS(Cell, Reference);
 
 private:
-
 public:
 	int species;
 	float height;
@@ -37,7 +36,7 @@ public:
 	bool isEmpty();
 	bool isATree();
 	void die();
-	void grow(RULES r, float growSpeed);
+	float grow(RULES r, float growSpeed);
 	void growD(Dictionary r, float growSpeed);
 };
 

@@ -4,7 +4,7 @@
 #include <Godot.hpp>
 #include <Sprite.hpp>
 
-#include "model.h"
+#include "state.h"
 #include "grid.h"
 #include "cell.h"
 
@@ -19,8 +19,8 @@ private:
 	int width;
 	int height;
 	float speed;
-	Grid* last_state;
-	Grid* next_state;
+	Grid *last_state;
+	Grid *next_state;
 	// Two states must be allocated at runtime to prevent crash
 	// States are swapped between pointers for performance
 	void swapStates();
@@ -35,11 +35,11 @@ public:
 
 	void setup(int width, int height, float speed, Dictionary birch, Dictionary spruce, Dictionary water, Dictionary fire);
 
-	void growAll();
+	godot::Variant growAll();
 	void flowAll(float rain);
 	// bool growAll();
 	// bool flowAll(float rain);
-	void growCell(int x, int y, float speed);
+	void growCell(int x, int y, float speed, State &st);
 	void flowCell(int x, int y, float rain);
 
 	void printTotals();

@@ -1,0 +1,79 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Font/theme.tres" type="Theme" id=1]
+[ext_resource path="res://Scripts/Menu.gd" type="Script" id=2]
+
+[node name="MarginContainer" type="MarginContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 1 )
+script = ExtResource( 2 )
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+margin_right = 1024.0
+margin_bottom = 600.0
+
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
+margin_left = 356.0
+margin_top = 58.0
+margin_right = 667.0
+margin_bottom = 541.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 304.0
+margin_bottom = 476.0
+
+[node name="CheckBox" type="CheckButton" parent="CenterContainer/PanelContainer/VBoxContainer"]
+margin_right = 297.0
+margin_bottom = 63.0
+text = "Show Looping Terrain"
+
+[node name="FullScreen" type="CheckButton" parent="CenterContainer/PanelContainer/VBoxContainer"]
+margin_top = 67.0
+margin_right = 297.0
+margin_bottom = 130.0
+pressed = true
+text = "Fullscreen"
+
+[node name="MiniMap" type="OptionButton" parent="CenterContainer/PanelContainer/VBoxContainer"]
+margin_top = 134.0
+margin_right = 297.0
+margin_bottom = 195.0
+text = "Minimap"
+
+[node name="Label" type="Label" parent="CenterContainer/PanelContainer/VBoxContainer"]
+margin_top = 199.0
+margin_right = 297.0
+margin_bottom = 254.0
+text = "Speed"
+
+[node name="HSlider" type="HSlider" parent="CenterContainer/PanelContainer/VBoxContainer"]
+margin_top = 258.0
+margin_right = 297.0
+margin_bottom = 274.0
+
+[node name="Restart" type="Button" parent="CenterContainer/PanelContainer/VBoxContainer"]
+margin_top = 278.0
+margin_right = 297.0
+margin_bottom = 339.0
+text = "Reset World"
+
+[node name="Button2" type="Button" parent="CenterContainer/PanelContainer/VBoxContainer"]
+margin_top = 343.0
+margin_right = 297.0
+margin_bottom = 404.0
+text = "About"
+
+[node name="Button3" type="Button" parent="CenterContainer/PanelContainer/VBoxContainer"]
+margin_top = 408.0
+margin_right = 297.0
+margin_bottom = 469.0
+text = "Close Menu"
+
+[connection signal="toggled" from="CenterContainer/PanelContainer/VBoxContainer/CheckBox" to="." method="showLoop"]
+[connection signal="toggled" from="CenterContainer/PanelContainer/VBoxContainer/FullScreen" to="." method="toggleFullscreen"]
+[connection signal="toggled" from="CenterContainer/PanelContainer/VBoxContainer/MiniMap" to="." method="toggleMinimap"]
+[connection signal="value_changed" from="CenterContainer/PanelContainer/VBoxContainer/HSlider" to="." method="changeSpeedTo"]
+[connection signal="pressed" from="CenterContainer/PanelContainer/VBoxContainer/Button3" to="." method="toggleMenu"]

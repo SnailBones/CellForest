@@ -2,14 +2,14 @@ extends Control
 
 
 var BACKGROUND = Color("180f16")
-const ARRAY2D = preload("bin/grid.gdns")
-const CELLSCRIPT = preload("bin/cell.gdns")
-const MODEL = preload("bin/model.gdns")
+const ARRAY2D = preload("res://bin/grid.gdns")
+const CELLSCRIPT = preload("res://bin/cell.gdns")
+const MODEL = preload("res://bin/model.gdns")
 const TREE_PAINTER = preload("TreePainter.gd")
 
 
-const PERF_SCRIPT = preload("Measure.gd")
-var PERF_TESTER;
+# const PERF_SCRIPT = preload("Measure.gd")
+# var PERF_TESTER;
 
 export var ROWS = 40
 export var COLUMNS = 40
@@ -65,10 +65,10 @@ export var FIRE = {
 
 export var WATER = {
 	# Precipitation follows a sine curve
-	"drySeason": .02,
-	"wetSeason": .022,
-	# "drySeason": .07,
-	# "wetSeason": .09,
+	# "drySeason": .02,
+	# "wetSeason": .022,
+	"drySeason": .015,
+	"wetSeason": .025,
 	"seasonLength": 24, # full cycle in simulation steps
 	"evaporation": .1,
 	# "evaporation": 0,
@@ -122,9 +122,9 @@ export var C_WATER = {
 	"seasonLength": 24, # full cycle in simulation steps
 	"evaporation": .01,
 	"diffusion": 2,
-	"runoff": 1, # Relationship between slope and water given away
-	"erosion":.05,
-	"suspended": .2 # Any float, higher numbers mean dirt travels further
+	"runoff": 10, # Relationship between slope and water given away
+	"erosion":1.5,
+	"suspended": 1.2 # Any float, higher numbers mean dirt travels further
 	# var suspended = 0;
 }
 
@@ -149,16 +149,50 @@ var DEBUG_WATER = 0
 var DEBUG_NEG_WATER = 0
 var DEBUG_MAX_WATER = 0
 
-# P to pause
-# L to loop
+
+onready var menu = $"../Menu"
+onready var piper = $"Piper"
+
 func _input(ev):
 	if ev is InputEventKey:
-		if ev.scancode == KEY_P and not ev.echo and ev.pressed:
-			paused = !paused
-		if ev.is_action_pressed("toggle_fullscreen"):
-			OS.window_fullscreen = !OS.window_fullscreen
-		if ev.scancode == KEY_L and not ev.echo and ev.pressed:
-			tree_painter.loop_world = !tree_painter.loop_world
+		# if ev.scancode == KEY_P and not ev.echo and ev.pressed:
+		if ev.is_action_pressed("toggle_menu"):
+			toggleMenu()
+		# if ev.is_action_pressed("toggle_fullscreen"):
+		# 	OS.window_fullscreen = !OS.window_fullscreen
+		# if ev.scancode == KEY_L and not ev.echo and ev.pressed:
+		# 	tree_painter.loop_world = !tree_painter.loop_world
+
+# These functions are called by signals from controls
+func showLooping(loop):
+	tree_painter.loop_world = loop;
+
+
+func toggleMenu():
+	paused = !paused
+	piper.pause(paused);
+	menu.toggleMenu();
+# func toggle_fullscreen():
+
+func toggleFullscreen(f):
+	OS.window_fullscreen = f
+	print("toggle fullscreen")
+
+func reset():
+	for x in range(COLUMNS):
+		for y in range(ROWS):
+			var cell = model.getCell(x, y)
+			cell.species = randi() % 3
+			# cell.species = 2
+			cell.water = randf()/2
+			if cell.species > 0:
+				cell.height = randf()
+			cell.elevation = sin(((float(x)/ROWS)+.25)*PI*2*hills)* hill_height + sin(((float(x+y)/(ROWS+COLUMNS))+.25)*PI*2*hills) * hill_height
+			# cell.elevation = sin(((float(x)/ROWS)+.25)*PI*2*hills) * hill_height + sin(((float(y)/COLUMNS)+.25)*PI*2*hills) * hill_height#+ randf()/2
+
+func setSpeed(speed):
+	model.speed = speed;
+
 
 func _ready():
 	# var screen_size = OS.get_screen_size()
@@ -168,7 +202,7 @@ func _ready():
 
 	VisualServer.set_default_clear_color(BACKGROUND)
 
-	PERF_TESTER = PERF_SCRIPT.new();
+	# PERF_TESTER = PERF_SCRIPT.new();
 
 	tree_painter = TREE_PAINTER.new(SPRUCE, BIRCH)
 	mouse_p = get_viewport().get_mouse_position()
@@ -177,26 +211,20 @@ func _ready():
 	print("About to make model")
 	model.setup(COLUMNS, ROWS, growSpeed, SPRUCE, BIRCH, WATER, FIRE)
 	print("resized")
-	for x in range(COLUMNS):
-		for y in range(ROWS):
-			var cell = model.getCell(x, y)
-			cell.species = randi() % 3
-			cell.water = randf()/2
-			if cell.species > 0:
-				cell.height = randf()
-			cell.elevation = sin(((float(x)/ROWS)+.25)*PI*2*hills)* hill_height + sin(((float(x+y)/(ROWS+COLUMNS))+.25)*PI*2*hills) * hill_height
-			# cell.elevation = sin(((float(x)/ROWS)+.25)*PI*2*hills) * hill_height + sin(((float(y)/COLUMNS)+.25)*PI*2*hills) * hill_height#+ randf()/2
+	reset();
 
 	add_child(tree_painter)
+
 
 func _process(delta):
 	if !paused:
 		var rain = getRain(tick)
 		tick += 1
-		PERF_TESTER.start()
-		var a = model.growAll()
-		var b = model.flowAll(rain)
-		PERF_TESTER.stop()
+		# PERF_TESTER.start()
+		var sounds = model.growAll()
+		piper.play(sounds)
+		model.flowAll(rain)
+		# PERF_TESTER.stop()
 		tree_painter.visualize(model.getState())
 		handleMouse(delta)
 		DEBUG_WATER = 0

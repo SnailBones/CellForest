@@ -1,5 +1,4 @@
 #include "model.h"
-// #include "rules.h"
 
 #include <iostream> // std::cout
 #include <string>
@@ -38,6 +37,8 @@ RULES Spruce;
 RULES Birch;
 FIRE Fire;
 WATER Water;
+
+// State st;
 
 void Model::_init()
 {
@@ -79,35 +80,36 @@ void Model::setup(int w, int h, float s, Dictionary spruce, Dictionary birch, Di
 	Fire.spreadMin = fire["spreadMin"];
 	Fire.dryAmount = fire["dryAmount"];
 
-	cout << "Spruce.waterToSprout is " << Spruce.waterToSprout << "\n";
-	cout << "Spruce.waterToGrow is " << Spruce.waterToGrow << "\n";
-	cout << "Spruce.portionTaken is " << Spruce.portionTaken << "\n";
-	cout << "Spruce.growRate is " << Spruce.growRate << "\n";
-	cout << "Spruce.spreadMin is " << Spruce.spreadMin << "\n";
-	cout << "Spruce.waterToLive is " << Spruce.waterToLive << "\n";
+	// cout << "Spruce.waterToSprout is " << Spruce.waterToSprout << "\n";
+	// cout << "Spruce.waterToGrow is " << Spruce.waterToGrow << "\n";
+	// cout << "Spruce.portionTaken is " << Spruce.portionTaken << "\n";
+	// cout << "Spruce.growRate is " << Spruce.growRate << "\n";
+	// cout << "Spruce.spreadMin is " << Spruce.spreadMin << "\n";
+	// cout << "Spruce.waterToLive is " << Spruce.waterToLive << "\n";
 
-	cout << "Birch.waterToSprout is " << Birch.waterToSprout << "\n";
-	cout << "Birch.waterToGrow is " << Birch.waterToGrow << "\n";
-	cout << "Birch.portionTaken is " << Birch.portionTaken << "\n";
-	cout << "Birch.growRate is " << Birch.growRate << "\n";
-	cout << "Birch.spreadMin is " << Birch.spreadMin << "\n";
-	cout << "Birch.waterToLive is " << Birch.waterToLive << "\n";
+	// cout << "Birch.waterToSprout is " << Birch.waterToSprout << "\n";
+	// cout << "Birch.waterToGrow is " << Birch.waterToGrow << "\n";
+	// cout << "Birch.portionTaken is " << Birch.portionTaken << "\n";
+	// cout << "Birch.growRate is " << Birch.growRate << "\n";
+	// cout << "Birch.spreadMin is " << Birch.spreadMin << "\n";
+	// cout << "Birch.waterToLive is " << Birch.waterToLive << "\n";
 
-	cout << "Water.diffusion is " << Water.diffusion << "\n";
-	cout << "Water.evaporation is " << Water.evaporation << "\n";
+	// cout << "Water.diffusion is " << Water.diffusion << "\n";
+	// cout << "Water.evaporation is " << Water.evaporation << "\n";
 
-	cout << "all set up! \n";
+	// cout << "all set up! \n";
 
 	assert(Water.diffusion <= 1);
 	assert(Water.evaporation < 1);
 }
 
-void Model::growCell(int x, int y, float speed)
+// records its effects to the global state through &st
+void Model::growCell(int x, int y, float speed, State &st)
 {
 
 	Cell *me = last_state->getCell(x, y);
 	Cell *next_me = next_state->getCell(x, y);
-	(*next_me).imitate(*me); // Next me is already the right cell, so we don't need to set.
+	(*next_me).imitate(*me);
 	Cell *n[8];
 	n[0] = last_state->getLooping(x, y + 1);
 	n[1] = last_state->getLooping(x, y - 1);
@@ -146,21 +148,137 @@ void Model::growCell(int x, int y, float speed)
 	if (me->species == 1)
 	{
 		species = Spruce;
+		// stats = &(st->spruce);
 	}
 	else if (me->species == 2)
 	{
 		species = Birch;
+		// stats = &(st->birch);
 	}
+	// cout << "BEGIN!\n";
+	// cout << "birch sprout is " << st.birch.sprout << "\n";
+	// cout << "spruce sprout is " << st.spruce.sprout << "\n";
+	// cout << "birch is at " << &(st.birch) << "\n";
+	// cout << "spruce is at " << &(st.spruce) << "\n";
+	// cout << "stats points to " << stats << "\n";
+	// cout << "sprout is " << stats->sprout << "\n";
+	// cout << "grow is " << stats->grow << "\n";
+	// cout << "die is " << stats->die << "\n";
+	// cout << "light is " << stats->light << "\n";
+	// cout << "GROWING!\n";
+	float lit = 0;
+	float grow = 0;
 	if ((*next_me).species != 0)
 	{
+		float sound_offset = float(x + y) / (width + height - 2);
+		//float sound_offset = .5;
+		// TODO width + height - 2 ?
+		TreeState *stats;
+		if (next_me->species == 1)
+		{
+			stats = &(st.spruce);
+			species = Spruce;
+		}
+		else
+		{
+			stats = &(st.birch);
+			species = Birch;
+		}
 		if (me->isATree() && fire > Fire.spreadMin * me->height)
 		{
 			(*next_me).water -= Fire.dryAmount;
 			if ((*next_me).water <= species.waterToLive)
+			{
 				(*next_me).on_fire = true;
+				stats->right.light += 1. - sound_offset;
+				stats->left.light += sound_offset;
+			}
 		}
-		(*next_me).grow(species, speed);
+		grow = (*next_me).grow(species, speed);
+		// if old is empty and new is a tree, i sprouted.
+		if (me->isEmpty())
+		{
+			// cout << "birch sprout is " << st.birch.sprout << "\n";
+			// cout << "spruce sprout is " << st.spruce.sprout << "\n";
+			// cout << "sprout is " << stats->sprout << "\n";
+			//stats->sprout++;
+			stats->right.sprout += 1. - sound_offset;
+			stats->left.sprout += sound_offset;
+			// cout << "now sprout is " << stats->sprout << "\n";
+			// cout << "now birch sprout is " << st.birch.sprout << "\n";
+			// cout << "now spruce sprout is " << st.spruce.sprout << "\n";
+		}
+		else if (grow == -1.f)
+		{
+			// cout << "die is " << stats->die << "\n";
+			stats->right.die += 1. - sound_offset;
+			stats->left.die += sound_offset;
+			// cout << "after die is " << stats->die << "\n";
+		}
+		else
+		{
+			// cout << "grow is " << stats->grow << "\n";
+			//stats->grow += grow;
+			stats->right.grow += (1. - sound_offset) * grow;
+			stats->left.grow += (sound_offset)*grow;
+			// cout << "after grow is " << stats->grow << "\n";
+			// cout << "now birch grow is " << st.birch.grow << "\n";
+			// cout << "now spruce grow is " << st.spruce.grow << "\n";
+		}
 	}
+	// godot::Array outArray;
+	// outArray.append(lit);
+	// outArray.append(grow);
+	// return outArray;
+}
+
+// grows all cells and returns changes to be converted to sound
+// returns an array including for each species:
+// death count
+// number lit on fire
+// growth amount (excluding sprouts)
+// sprout amount
+
+godot::Variant Model::growAll()
+{
+	State st = State();
+	// State *state = new State;
+	// State st = *state;
+
+	// cout << "starting to grow!  these should be 0: \n";
+	// cout << " spruce die is " << st.spruce.die << "\n";
+	// cout << " spruce sprout is " << st.spruce.sprout << "\n";
+	// cout << " birch sprout is " << st.birch.sprout << "\n";
+
+	swapStates();
+	for (int i = 0; i < width; ++i)
+	{
+		for (int j = 0; j < height; ++j)
+		{
+			// cout << "growing:: " << i << " " << j << "\n";
+			growCell(i, j, speed, st);
+		}
+	}
+	godot::Array outArray;
+	// Converts our custom struct into a GDScript array.
+	outArray.append(st.birch.left.die);
+	outArray.append(st.spruce.left.die);
+	outArray.append(st.birch.left.light);
+	outArray.append(st.spruce.left.light);
+	outArray.append(st.birch.left.grow);
+	outArray.append(st.spruce.left.grow);
+	outArray.append(st.birch.left.sprout);
+	outArray.append(st.spruce.left.sprout);
+
+	outArray.append(st.birch.right.die);
+	outArray.append(st.spruce.right.die);
+	outArray.append(st.birch.right.light);
+	outArray.append(st.spruce.right.light);
+	outArray.append(st.birch.right.grow);
+	outArray.append(st.spruce.right.grow);
+	outArray.append(st.birch.right.sprout);
+	outArray.append(st.spruce.right.sprout);
+	return outArray;
 }
 
 float waterGiven, waterTaken, dirtGiven, dirtTaken, dirtErode, dirtDeposit;
@@ -334,18 +452,6 @@ void Model::flowAll(float rain)
 		{
 			flowCell(i, j, rain);
 			// growCell(i, j, speed);
-		}
-	}
-}
-
-void Model::growAll()
-{
-	swapStates();
-	for (int i = 0; i < width; ++i)
-	{
-		for (int j = 0; j < height; ++j)
-		{
-			growCell(i, j, speed);
 		}
 	}
 }

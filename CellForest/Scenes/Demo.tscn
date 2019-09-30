@@ -1,0 +1,63 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Scripts/Forest.gd" type="Script" id=1]
+[ext_resource path="res://icon.png" type="Texture" id=2]
+[ext_resource path="res://Scripts/Viz.gd" type="Script" id=3]
+
+[node name="Area2D" type="Area2D"]
+
+[node name="Forest" type="Control" parent="." groups=[
+"forest",
+]]
+anchor_right = 1.0
+margin_left = 512.0
+margin_top = 230.0
+margin_right = 511.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+ROWS = 50
+COLUMNS = 50
+FIRE = {
+"dryAmount": 0.3,
+"extinguishChance": 0.0,
+"spreadMin": 0.1
+}
+
+[node name="Viz" type="TextureRect" parent="."]
+margin_left = 16.0
+margin_top = 20.4487
+margin_right = 82.1765
+margin_bottom = 84.4487
+rect_pivot_offset = Vector2( 41.8235, 29.5513 )
+texture = ExtResource( 2 )
+script = ExtResource( 3 )
+
+[node name="Viz2" type="TextureRect" parent="."]
+margin_left = 16.0
+margin_top = 93.155
+margin_right = 82.1765
+margin_bottom = 157.155
+rect_pivot_offset = Vector2( 41.8235, 29.5513 )
+texture = ExtResource( 2 )
+script = ExtResource( 3 )
+
+[node name="Viz3" type="TextureRect" parent="."]
+margin_left = 16.0
+margin_top = 174.95
+margin_right = 84.4486
+margin_bottom = 238.95
+rect_pivot_offset = Vector2( 41.8235, 29.5513 )
+texture = ExtResource( 2 )
+script = ExtResource( 3 )
+
+[node name="Viz4" type="TextureRect" parent="."]
+margin_left = 16.0
+margin_top = 245.384
+margin_right = 84.4486
+margin_bottom = 309.384
+rect_pivot_offset = Vector2( 41.8235, 29.5513 )
+texture = ExtResource( 2 )
+script = ExtResource( 3 )
+
