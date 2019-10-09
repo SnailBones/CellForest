@@ -4,8 +4,23 @@ import subprocess
 
 opts = Variables([], ARGUMENTS)
 
+# clangity clang clang
+clang_path = "C:\\Program Files\\LLVM\\bin"
+
 # Gets the standard flags CC, CCX, etc.
 env = DefaultEnvironment()
+# env = DefaultEnvironment(ENV={'PATH': os.environ['PATH']})
+# env = Environment(ENV=os.environ)
+
+# clangity clang clang
+# env.Append(PATH=path)
+# env.Append(PATH=os.environ['PATH'])
+
+# all_paths = env.Dictionary('PATH')
+# all_paths = env['ENV']['PATH']
+# print(all_paths)
+# print("path in all_paths is " + str(path[0] in all_paths))
+
 
 # Define our options
 opts.Add(EnumVariable('target', "Compilation target",
@@ -35,6 +50,11 @@ opts.Update(env)
 if env['use_llvm']:
     env['CC'] = 'clang'
     env['CXX'] = 'clang++'
+
+    # Added this, trying to make clang work
+    # env['PATH'] = os.environ['PATH']
+    # env['tools'] = ['clang++']
+    env.AppendENVPath('PATH', clang_path)
 
 if env['p'] != '':
     env['platform'] = env['p']
@@ -72,9 +92,11 @@ elif env['platform'] in ('x11', 'linux'):
         env.Append(CCFLAGS=['-fPIC', '-g', '-O3'])
         # env.Append(CXXFLAGS=['-std=c++17'])
 
+
 elif env['platform'] == "windows":
     env['target_path'] += 'win64/'
     cpp_library += '.windows'
+
     # This makes sure to keep the session environment variables on windows,
     # that way you can run scons in a vs 2017 prompt and it will find all the required tools
     env.Append(ENV=os.environ)

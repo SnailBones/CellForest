@@ -121,10 +121,10 @@ export var C_WATER = {
 	"wetSeason": .12,
 	"seasonLength": 24, # full cycle in simulation steps
 	"evaporation": .01,
-	"diffusion": 2,
-	"runoff": 10, # Relationship between slope and water given away
-	"erosion":1.5,
-	"suspended": 1.2 # Any float, higher numbers mean dirt travels further
+	"diffusion": .5, # runoff is 1- diffusion
+	"runoff": 3, # Relationship between slope and water given away
+	"erosion": 1,
+	"suspended": 8.6 # Any float, higher numbers mean dirt travels further
 	# var suspended = 0;
 }
 
@@ -150,7 +150,8 @@ var DEBUG_NEG_WATER = 0
 var DEBUG_MAX_WATER = 0
 
 
-onready var menu = $"../Menu"
+onready var menu = $"../MenuFrame/Menu"
+onready var about = $"../MenuFrame/About"
 onready var piper = $"Piper"
 
 func _input(ev):
@@ -158,8 +159,8 @@ func _input(ev):
 		# if ev.scancode == KEY_P and not ev.echo and ev.pressed:
 		if ev.is_action_pressed("toggle_menu"):
 			toggleMenu()
-		# if ev.is_action_pressed("toggle_fullscreen"):
-		# 	OS.window_fullscreen = !OS.window_fullscreen
+		if ev.is_action_pressed("toggle_fullscreen"):
+			OS.window_fullscreen = !OS.window_fullscreen
 		# if ev.scancode == KEY_L and not ev.echo and ev.pressed:
 		# 	tree_painter.loop_world = !tree_painter.loop_world
 
@@ -169,14 +170,21 @@ func showLooping(loop):
 
 
 func toggleMenu():
-	paused = !paused
-	piper.pause(paused);
-	menu.toggleMenu();
+	# paused = !paused
+	# piper.pause(paused);
+	if (menu != null):
+		menu.toggleMenu();
+		about.visible = false;
 # func toggle_fullscreen():
 
-func toggleFullscreen(f):
-	OS.window_fullscreen = f
-	print("toggle fullscreen")
+func toggleAbout():
+	about.visible = !about.visible
+	menu.visible = false;
+
+
+func toggleFullscreen():
+	OS.window_fullscreen = !OS.window_fullscreen
+	# print("toggle fullscreen")
 
 func reset():
 	for x in range(COLUMNS):
@@ -193,6 +201,13 @@ func reset():
 func setSpeed(speed):
 	model.speed = speed;
 
+func setVolume(volume):
+	# piper.user_volume = volume/100;
+	if volume == 0:
+		AudioServer.set_bus_mute(0,true)
+	else:
+		AudioServer.set_bus_mute(0,false)
+		AudioServer.set_bus_volume_db(0, volume/100)
 
 func _ready():
 	# var screen_size = OS.get_screen_size()

@@ -66,12 +66,14 @@ func playStream(player, pitch, vol):
 	# print("playing!")
 	# print("volume is ", volume)
 	# print("player is ", player)
-	if vol > 0:
-		player.stream_paused=false;
-		player.pitch_scale=pitch
-		player.volume_db = vol-40+5/pitch # play lower notes louder
-		# provides balance to the ears
-		player.stream_paused=true;
+	# if vol > 0:
+	player.stream_paused=false;
+	player.pitch_scale=pitch
+	player.volume_db = vol-40+2/pitch # play lower notes louder
+	# player.volume_db = 10;
+	# provides balance to the ears
+	# else:
+		# player.stream_paused=true;
 
 func playBoth(duo, sc = scale):
 	#print("playing")
@@ -79,12 +81,16 @@ func playBoth(duo, sc = scale):
 	if (total > 0): # testing exaggerated stero
 		duo[0] = duo[0]*duo[0]*duo[0]/(total*total*total)
 		duo[1] = duo[1]*duo[1]*duo[1]/(total*total*total)
-	#print("total is", total)
-	var note = stepScale(total/200 - 1, sc);
+	# print("total is", total, "duo is", duo)
 	# print("note is", note)
-	playStream(stream_l, note, duo[0]*my_volume)
-	playStream(stream_r, note, duo[1]*my_volume)
-	return note
+	if total > 20: # arbitrary threshold minimizes droning
+		var note = stepScale(total/200 - 1, sc);
+		playStream(stream_l, note, (duo[0]*my_volume*20))
+		playStream(stream_r, note, (duo[1]*my_volume*20))
+	else:
+		stream_l.stream_paused=true;
+		stream_r.stream_paused=true;
+	# return note
 
 func playLeft(note, vol):
 	playStream(stream_l, note, vol*my_volume)

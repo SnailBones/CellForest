@@ -170,7 +170,7 @@ void Model::growCell(int x, int y, float speed, State &st)
 	float grow = 0;
 	if ((*next_me).species != 0)
 	{
-		float sound_offset = float(x + y) / (width + height - 2);
+		float sound_offset = float(width - x + y) / (width + height - 2);
 		//float sound_offset = .5;
 		// TODO width + height - 2 ?
 		TreeState *stats;

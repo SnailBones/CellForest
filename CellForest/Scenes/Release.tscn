@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Scripts/Forest.gd" type="Script" id=1]
 [ext_resource path="res://Scripts/Piper.gd" type="Script" id=2]
@@ -6,6 +6,8 @@
 [ext_resource path="res://Scripts/Viz.gd" type="Script" id=4]
 [ext_resource path="res://Font/theme.tres" type="Theme" id=5]
 [ext_resource path="res://Scripts/Menu.gd" type="Script" id=6]
+
+[sub_resource type="ShaderMaterial" id=1]
 
 [node name="Area2D" type="Area2D"]
 
@@ -40,52 +42,74 @@ rect_pivot_offset = Vector2( 41.8235, 29.5513 )
 texture = ExtResource( 3 )
 script = ExtResource( 4 )
 
-[node name="Menu" type="CenterContainer" parent="."]
-visible = false
+[node name="MenuFrame" type="CenterContainer" parent="."]
+editor/display_folded = true
 margin_right = 1024.0
 margin_bottom = 600.0
 theme = ExtResource( 5 )
-script = ExtResource( 6 )
 
-[node name="PanelContainer" type="PanelContainer" parent="Menu"]
+[node name="Menu" type="PanelContainer" parent="MenuFrame"]
+editor/display_folded = true
+visible = false
 margin_left = 505.0
 margin_top = 293.0
 margin_right = 519.0
 margin_bottom = 307.0
+script = ExtResource( 6 )
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Menu/PanelContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MenuFrame/Menu"]
 margin_left = 7.0
 margin_top = 7.0
 margin_right = 206.0
-margin_bottom = 416.0
+margin_bottom = 475.0
 
-[node name="CheckBox" type="CheckButton" parent="Menu/PanelContainer/VBoxContainer"]
+[node name="Vol" type="HBoxContainer" parent="MenuFrame/Menu/VBoxContainer"]
+editor/display_folded = true
 margin_right = 199.0
 margin_bottom = 55.0
-text = "Loop Terrain    "
+alignment = 1
 
-[node name="FullScreen" type="CheckButton" parent="Menu/PanelContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="MenuFrame/Menu/VBoxContainer/Vol"]
+margin_right = 75.0
+margin_bottom = 55.0
+text = "Volume:"
+align = 1
+
+[node name="HSlider" type="HSlider" parent="MenuFrame/Menu/VBoxContainer/Vol"]
+margin_left = 79.0
+margin_right = 199.0
+margin_bottom = 55.0
+size_flags_horizontal = 3
+size_flags_vertical = 1
+value = 20.0
+
+[node name="CheckBox" type="CheckButton" parent="MenuFrame/Menu/VBoxContainer"]
 margin_top = 59.0
 margin_right = 199.0
 margin_bottom = 114.0
-rect_pivot_offset = Vector2( -40, -66 )
-size_flags_horizontal = 7
-pressed = true
-text = "Fullscreen"
+text = "Loop Terrain    "
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Menu/PanelContainer/VBoxContainer"]
+[node name="FullScreen" type="Button" parent="MenuFrame/Menu/VBoxContainer"]
 margin_top = 118.0
 margin_right = 199.0
 margin_bottom = 173.0
+rect_pivot_offset = Vector2( -40, -66 )
+size_flags_horizontal = 7
+text = "Fullscreen"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MenuFrame/Menu/VBoxContainer"]
+margin_top = 177.0
+margin_right = 199.0
+margin_bottom = 232.0
 alignment = 1
 
-[node name="Label" type="Label" parent="Menu/PanelContainer/VBoxContainer/HBoxContainer2"]
+[node name="Label" type="Label" parent="MenuFrame/Menu/VBoxContainer/HBoxContainer2"]
 margin_right = 85.0
 margin_bottom = 55.0
 text = "Minimap:"
 align = 1
 
-[node name="MiniMap" type="OptionButton" parent="Menu/PanelContainer/VBoxContainer/HBoxContainer2"]
+[node name="MiniMap" type="OptionButton" parent="MenuFrame/Menu/VBoxContainer/HBoxContainer2"]
 margin_left = 89.0
 margin_right = 199.0
 margin_bottom = 55.0
@@ -95,19 +119,19 @@ align = 1
 items = [ "None", null, false, 0, null, "All", null, false, 1, null, "Elevation", null, false, 2, null, "Water", null, false, 3, null, "Sediment", null, false, 4, null ]
 selected = 0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Menu/PanelContainer/VBoxContainer"]
-margin_top = 177.0
+[node name="HBoxContainer" type="HBoxContainer" parent="MenuFrame/Menu/VBoxContainer"]
+margin_top = 236.0
 margin_right = 199.0
-margin_bottom = 232.0
+margin_bottom = 291.0
 alignment = 1
 
-[node name="Label" type="Label" parent="Menu/PanelContainer/VBoxContainer/HBoxContainer"]
+[node name="Label" type="Label" parent="MenuFrame/Menu/VBoxContainer/HBoxContainer"]
 margin_right = 61.0
 margin_bottom = 55.0
 text = "Speed:"
 align = 1
 
-[node name="HSlider" type="HSlider" parent="Menu/PanelContainer/VBoxContainer/HBoxContainer"]
+[node name="HSlider" type="HSlider" parent="MenuFrame/Menu/VBoxContainer/HBoxContainer"]
 margin_left = 65.0
 margin_right = 199.0
 margin_bottom = 55.0
@@ -118,29 +142,109 @@ max_value = 10.0
 step = 0.25
 value = 1.0
 exp_edit = true
-ticks_on_borders = false
 
-[node name="Restart" type="Button" parent="Menu/PanelContainer/VBoxContainer"]
-margin_top = 236.0
-margin_right = 199.0
-margin_bottom = 291.0
-text = "Reset World"
-
-[node name="Button2" type="Button" parent="Menu/PanelContainer/VBoxContainer"]
+[node name="Restart" type="Button" parent="MenuFrame/Menu/VBoxContainer"]
 margin_top = 295.0
 margin_right = 199.0
 margin_bottom = 350.0
-text = "About"
+text = "Reset World"
 
-[node name="Button3" type="Button" parent="Menu/PanelContainer/VBoxContainer"]
+[node name="About" type="Button" parent="MenuFrame/Menu/VBoxContainer"]
 margin_top = 354.0
 margin_right = 199.0
 margin_bottom = 409.0
+text = "About"
+
+[node name="Button3" type="Button" parent="MenuFrame/Menu/VBoxContainer"]
+margin_top = 413.0
+margin_right = 199.0
+margin_bottom = 468.0
 text = "Close Menu"
 
-[connection signal="toggled" from="Menu/PanelContainer/VBoxContainer/CheckBox" to="Forest" method="showLooping"]
-[connection signal="toggled" from="Menu/PanelContainer/VBoxContainer/FullScreen" to="Forest" method="toggleFullscreen"]
-[connection signal="item_selected" from="Menu/PanelContainer/VBoxContainer/HBoxContainer2/MiniMap" to="Viz" method="setView"]
-[connection signal="value_changed" from="Menu/PanelContainer/VBoxContainer/HBoxContainer/HSlider" to="Forest" method="setSpeed"]
-[connection signal="pressed" from="Menu/PanelContainer/VBoxContainer/Restart" to="Forest" method="reset"]
-[connection signal="pressed" from="Menu/PanelContainer/VBoxContainer/Button3" to="Forest" method="toggleMenu"]
+[node name="About" type="VBoxContainer" parent="MenuFrame"]
+visible = false
+margin_left = 112.0
+margin_top = 50.0
+margin_right = 912.0
+margin_bottom = 550.0
+
+[node name="ColorRect" type="ColorRect" parent="MenuFrame/About"]
+self_modulate = Color( 0.976471, 0, 0, 0.47451 )
+material = SubResource( 1 )
+margin_right = 800.0
+margin_bottom = 500.0
+rect_min_size = Vector2( 800, 500 )
+color = Color( 0, 0, 0, 1 )
+
+[node name="Button" type="Button" parent="MenuFrame/About/ColorRect"]
+margin_left = 105.015
+margin_top = 503.294
+margin_right = 705.015
+margin_bottom = 533.294
+text = "Close"
+
+[node name="RichTextLabel" type="RichTextLabel" parent="MenuFrame/About/ColorRect"]
+anchor_left = 0.7
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -557.827
+margin_top = 5.5867
+margin_right = 3.17328
+margin_bottom = 1.5867
+rect_min_size = Vector2( 800, 400 )
+size_flags_stretch_ratio = 0.0
+bbcode_enabled = true
+bbcode_text = "[center]Move the mouse rapidly to light a fire.
+Left click to dig. Right click to mound.
+Spacebar for menu.[/center]
+
+[center][b]ABOUT[/b][/center]
+
+Our ability to reshape our environment is a key difference between humans and other animals. The drive to improve the world around us—and the potential to damage it—is probably as old as our species. Preagricultural peoples used fire as a tool to transform dense forests into open woodland, providing habitat for desired plant and animal species. Whoever lit the sparks must have felt a quasi-magical power: to improve one’s surrounding with one’s own hands.  Every technological and social revolution since then has made way for awesome feats of collaboration, but with complexity has come opacity.  As Amazon and Uber Eats usher in a world where every desire is delivered to our door, it becomes ever easier to forget that from the fact that our survival and pleasure alike still depend on nonhuman creatures.
+
+What would it feel like to change the world? Not to reshape it into a precise fantasy, but to touch it with a blunt instrument, and feel it respond? What if we could toss aside our world’s familiar rules of scale, time, and power? What if we could reshape nature with a few movements of our hand, watch a hundred years pass in a second? And how might a peek into this world change how we think about world-shaping in effects of your actions in a world that is bigger, slower, and infinitely more complex?
+
+A Tree Falls is a model of ecological succession in a mixed northern forest* dominated by two species of trees: spruce and birch. Fast-growing birches are the first trees to sprout back after a fire, but hardier spruce dominates in established forests. The model implements a cellular automaton, like the well-known Game of Life. The rules are local (every cell observes only its neighbors) and relatively simple, yet they work together to approximate ecological and geological behaviors. Trees compete for water as it flows between cells, moved by gravity and diffusion. Water transports, erodes, and deposits sediment, reshaping the terrain. 
+
+The game is programmed with C++ and the open source Godot Engine. I’ve also released the [url=https://github.com/SnailBones/CellForest]source code[/url] under an MIT license. Most of the tree behavior can be modified without writing any code. If you create anything interesting, if you’d like to share your thoughts on the game, please feel free to reach out to me at aidhendrickson@gmail.com
+
+[center][b]CREDITS[/b][/center]
+
+[center]Game by ailanthus (Aidan H H)
+Sounds are Creative Commons.
+Special thanks to Catherine Harris and the Computational Ecologies class. [/center]
+
+* I chose this ecosystem because of its relative simplicity and the fact that it is adapted to fire.  In more complex ecosystems that are not adapted to dealing with regular disturbance, such as the Amazon rainforest, succession can include countless native and introduced tree species and take many hundreds of years, and the original species composition may never be regained. This game does not endorse lighting fire in any actual forest, or for that matter, digging pits or building mounds. Do so at entirely your own risk.
+"
+text = "Move the mouse rapidly to light a fire.
+Left click to dig. Right click to mound.
+Spacebar for menu.
+
+ABOUT
+
+Our ability to reshape our environment is a key difference between humans and other animals. The drive to improve the world around us—and the potential to damage it—is probably as old as our species. Preagricultural peoples used fire as a tool to transform dense forests into open woodland, providing habitat for desired plant and animal species. Whoever lit the sparks must have felt a quasi-magical power: to improve one’s surrounding with one’s own hands.  Every technological and social revolution since then has made way for awesome feats of collaboration, but with complexity has come opacity.  As Amazon and Uber Eats usher in a world where every desire is delivered to our door, it becomes ever easier to forget that from the fact that our survival and pleasure alike still depend on nonhuman creatures.
+
+What would it feel like to change the world? Not to reshape it into a precise fantasy, but to touch it with a blunt instrument, and feel it respond? What if we could toss aside our world’s familiar rules of scale, time, and power? What if we could reshape nature with a few movements of our hand, watch a hundred years pass in a second? And how might a peek into this world change how we think about world-shaping in effects of your actions in a world that is bigger, slower, and infinitely more complex?
+
+A Tree Falls is a model of ecological succession in a mixed northern forest* dominated by two species of trees: spruce and birch. Fast-growing birches are the first trees to sprout back after a fire, but hardier spruce dominates in established forests. The model implements a cellular automaton, like the well-known Game of Life. The rules are local (every cell observes only its neighbors) and relatively simple, yet they work together to approximate ecological and geological behaviors. Trees compete for water as it flows between cells, moved by gravity and diffusion. Water transports, erodes, and deposits sediment, reshaping the terrain. 
+
+The game is programmed with C++ and the open source Godot Engine. I’ve also released the source code under an MIT license. Most of the tree behavior can be modified without writing any code. If you create anything interesting, if you’d like to share your thoughts on the game, please feel free to reach out to me at aidhendrickson@gmail.com
+
+CREDITS
+
+Game by ailanthus (Aidan H H)
+Sounds are Creative Commons.
+Special thanks to Catherine Harris and the Computational Ecologies class. 
+
+* I chose this ecosystem because of its relative simplicity and the fact that it is adapted to fire.  In more complex ecosystems that are not adapted to dealing with regular disturbance, such as the Amazon rainforest, succession can include countless native and introduced tree species and take many hundreds of years, and the original species composition may never be regained. This game does not endorse lighting fire in any actual forest, or for that matter, digging pits or building mounds. Do so at entirely your own risk.
+"
+
+[connection signal="value_changed" from="MenuFrame/Menu/VBoxContainer/Vol/HSlider" to="Forest" method="setVolume"]
+[connection signal="toggled" from="MenuFrame/Menu/VBoxContainer/CheckBox" to="Forest" method="showLooping"]
+[connection signal="pressed" from="MenuFrame/Menu/VBoxContainer/FullScreen" to="Forest" method="toggleFullscreen"]
+[connection signal="item_selected" from="MenuFrame/Menu/VBoxContainer/HBoxContainer2/MiniMap" to="Viz" method="setView"]
+[connection signal="value_changed" from="MenuFrame/Menu/VBoxContainer/HBoxContainer/HSlider" to="Forest" method="setSpeed"]
+[connection signal="pressed" from="MenuFrame/Menu/VBoxContainer/Restart" to="Forest" method="reset"]
+[connection signal="pressed" from="MenuFrame/Menu/VBoxContainer/About" to="Forest" method="toggleAbout"]
+[connection signal="pressed" from="MenuFrame/Menu/VBoxContainer/Button3" to="Forest" method="toggleMenu"]
+[connection signal="pressed" from="MenuFrame/About/ColorRect/Button" to="Forest" method="toggleAbout"]
