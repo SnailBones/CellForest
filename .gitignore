@@ -1,2 +1,6 @@
 *.import
 .import/
+src/*.obj
+*.idb
+*.pdb
+.sconsign.dblite
