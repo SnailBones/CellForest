@@ -1,19 +1,19 @@
 # CellForest
 
-A cellular automata biological and geological simulation in C++ and Godot. It also plays music. Download available on [itch.io](https://ailanthus.itch.io/forest).
+A cellular automata biological and geological simulation in C++ and Godot. It also plays music. Download the game [here](https://ailanthus.itch.io/forest).
 
 <img src="img/demo.gif">
 
 # Setup
 
-Since the simulation is programmed in C++ as a GDNative module, setup is a bit complex. I've tested it only on Windows, so other platforms might need a bit of tweaking. Here's the neccesary steps:
+Since the simulation is programmed in C++ as a GDNative module, setup is a bit hairy. I've tested it only on Windows, so other platforms might need a bit of tweaking. Here's the neccesary steps:
 * Dowload or clone this repository.
 * Pull the [godot-cpp source](https://github.com/GodotNativeTools/godot-cpp) with `git submodule update --init --recursive`
 * Consult the [official Godot documentation](https://docs.godotengine.org/en/latest/tutorials/plugins/gdnative/gdnative-cpp-example.html) to set up additional dependencies for your operating system.
-* In the directory you just cloned (`cd godot-cpp`), compile the source. (Something like`scons platform={your platform} generate_bindings=yes`)
-* You'll have generated a file called something like `CellForest/godot-cpp/bin//libgodot-cpp.windows.release.debug.default` On windows, you need to add the ".lib" suffx. (This is due to an issue in the Godot's example scons file code I copied, if you know a fix, I'd be happy to hear it.)
-* Compile the game with `scons platform=<your platform>`
-* Open and run your project in Godot!
+* In the directory you just cloned (`cd godot-cpp`), compile the source. (Something like`scons platform={your platform} generate_bindings=yes [target=release]`)
+* You'll have generated a file called something like `CellForest/godot-cpp/bin//libgodot-cpp.windows.debug.default` (The 'debug' will be replaced with 'release' in release mode.) On windows, you need to add the ".lib" suffx. (This is due to an issue in the Godot's example scons file code, if anyone knows a fix, pray tell me!)
+* Compile the game with `scons platform=<your platform> [target=release]`
+* Open and run the project in Godot! If all went well, it will be ready to play or export.
 
 
 # License
