@@ -9,10 +9,16 @@ reloadable=true
 
 [entry]
 
+<<<<<<< HEAD
 X11.64="res://bin/x11/libcell.so"
 Windows.64="res://bin/win64/cell.dll"
 OSX.64="res://bin/osx/libcell.dylib"
 #Windows.64="res://bin/win64/libgdexample.dll"
+=======
+X11.64="res://bin/x11/cell.so"
+Windows.64="res://bin/win64/cell.dll"
+OSX.64="res://bin/osx/cell.dylib"
+>>>>>>> 4b814da0e572718048e7c11c0626a1c358e945f4
 
 [dependencies]
 
