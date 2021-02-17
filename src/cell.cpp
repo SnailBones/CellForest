@@ -80,6 +80,7 @@ void Cell::growD(Dictionary d, float growSpeed)
 // Returns growth or -1 for death.
 float Cell::grow(RULES r, float growSpeed)
 {
+	// If tree is on fire, burn. Stay "alive" until burned.
 	if (on_fire)
 	{
 		height -= r.burnRate;
@@ -88,9 +89,10 @@ float Cell::grow(RULES r, float growSpeed)
 			die();
 			return -1;
 		}
+		return 0;
 	}
 	else
-	//handle farms here if need be, port over farm function
+	// Otherwise, instantly die if there's not enough water.
 	{
 		if (water < r.waterToLive)
 		{

@@ -11,8 +11,8 @@ const TREE_PAINTER = preload("TreePainter.gd")
 # const PERF_SCRIPT = preload("Measure.gd")
 # var PERF_TESTER;
 
-export var ROWS = 40
-export var COLUMNS = 40
+export var ROWS = 50
+export var COLUMNS = 50
 
 export var hills = 2
 export var hill_height = 2
@@ -58,9 +58,12 @@ var FARM = {
 }
 
 export var FIRE = {
+	# "spreadMin": .1,
+	# "extinguishChance": .00,
+	# "dryAmount": .3
 	"spreadMin": .1,
 	"extinguishChance": .00,
-	"dryAmount": .3
+	"dryAmount": .2
 }
 
 export var WATER = {
@@ -223,9 +226,9 @@ func _ready():
 	mouse_p = get_viewport().get_mouse_position()
 
 	model = MODEL.new()
-	print("About to make model")
+	print("Setting up model:")
 	model.setup(COLUMNS, ROWS, growSpeed, SPRUCE, BIRCH, WATER, FIRE)
-	print("resized")
+	print("Done")
 	reset();
 
 	add_child(tree_painter)

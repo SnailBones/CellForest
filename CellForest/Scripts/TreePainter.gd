@@ -112,9 +112,9 @@ func _draw():
 				#neighbors = [[worldToScreen(i+1, j, neighbor1.elevation)]]
 			if not loop == []:
 				neighbors = getNeighborPositions(cell, [neighbor1, neighbor2])
-				draw(cell, loop, neighbors)
+				draw(cell, loop, neighbors, i, j)
 	# PERF_TESTER.stop()
-func draw(cell, positions, neighbors):
+func draw(cell, positions, neighbors, i, j):
 	# me += position;
 	var color
 	if cell.on_fire && cell.height > 0:
@@ -179,7 +179,8 @@ func draw(cell, positions, neighbors):
 		draw_spruce(me, cell.height*MAX_HEIGHT, color)
 	elif cell.species == 2:
 		# draw_grid(me, GRID_HEIGHT, color)
-		draw_birch(me, cell.height*MAX_HEIGHT, color)
+		var flip = (i + j) % 2
+		draw_birch(me, cell.height*MAX_HEIGHT, color, flip)
 	elif cell.species == 3:
 		if cell.height < 0:
 			setLabel(cell.height, Color(1.0, 0.0, 0.0))
@@ -222,20 +223,23 @@ func draw_spruce(me, height, color): #height in pixels
 # 	draw_line(topRight, topLeft, color, LW)
 # 	draw_line(rightCorner,leftCorner, color, LW)
 
-func draw_birch(me, height, color): #height in pixels
+func draw_birch(me, height, color, flip): #height in pixels
 	var x = me.x
 	var y = me.y
 	var trunk_height = .2 * height
 	var width = .2 * height
 	height = height*.8
-	var leftCorner = Vector2(x-width, y-trunk_height)
-	var rightCorner = Vector2(x+width, y-trunk_height)
-	var topLeft = Vector2(x-width, y-height)
-	var topRight = Vector2(x+width, y-height)
+	# var leftCorner = Vector2(x-width, y-trunk_height)
+	# var rightCorner = Vector2(x+width, y-trunk_height)
+	# var topLeft = Vector2(x-width, y-height)
+	# var topRight = Vector2(x+width, y-height)
 	# draw_polygon([leftCorner, rightCorner, topRight, topLeft], [BACKGROUND])
 	draw_line(me,Vector2(x, y-height), color, LW) #trunk
+	if flip:
+		width = -width
+
 	draw_line(Vector2(x, y-height*.66), Vector2(x+width, y-height*.8), color, LW)
-	draw_line(Vector2(x, y-height*.33), Vector2(x-height*.3, y-height*.6), color, LW)
+	draw_line(Vector2(x, y-height*.33), Vector2(x-width * 1.5, y-height*.6), color, LW)
 	# draw_line(rightCorner,topRight, color, LW)
 	# draw_line(topRight, topLeft, color, LW)
 	# draw_line(rightCorner,leftCorner, color, LW)

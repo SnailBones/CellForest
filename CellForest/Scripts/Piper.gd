@@ -31,19 +31,19 @@ const blues = [0, 3.0/12, 5.0/12, 6.0/12, 7.0/12, 10.0/12]
 # onready var spruce_ambient = $"SpruceAmbient"
 onready var sound_glass = load("res://Sound/glass.wav")
 onready var sound_cello = load("res://Sound/cello.wav")
-onready var sound_oboe = load("res://Sound/oboe.wav") # a chord
-onready var sound_harmonica = load("res://Sound/harmonica.wav")
-onready var sound_gong = load("res://Sound/gong.wav") # weird harmonies, better to modulate volume?
+# onready var sound_oboe = load("res://Sound/oboe.wav") # a chord
+# onready var sound_harmonica = load("res://Sound/harmonica.wav")
+# onready var sound_gong = load("res://Sound/gong.wav") # weird harmonies, better to modulate volume?
 onready var sound_trombone = load("res://Sound/trombone.wav")
 onready var sound_clarinet = load("res://Sound/clarinet.wav")
 onready var sound_digeridoo = load("res://Sound/digeridoo.wav") # funky sounding bass note
 
-onready var sound_pluck = load("res://Sound/pluck.wav") # too naisy
-onready var sound_harp = load("res://Sound/harp.wav")
-onready var sound_mandolin = load("res://Sound/mandolin.wav") # too noisy
+# onready var sound_pluck = load("res://Sound/pluck.wav") # too naisy
+# onready var sound_harp = load("res://Sound/harp.wav")
+# onready var sound_mandolin = load("res://Sound/mandolin.wav") # too noisy
 onready var sound_kalimba = load("res://Sound/kalimba.wav")
 onready var sound_drum = load("res://Sound/drum.wav")
-onready var sound_marimba = load("res://Sound/marimba.wav")
+# onready var sound_marimba = load("res://Sound/marimba.wav")
 
 var sounds
 

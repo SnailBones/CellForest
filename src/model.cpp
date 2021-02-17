@@ -80,24 +80,6 @@ void Model::setup(int w, int h, float s, Dictionary spruce, Dictionary birch, Di
 	Fire.spreadMin = fire["spreadMin"];
 	Fire.dryAmount = fire["dryAmount"];
 
-	// cout << "Spruce.waterToSprout is " << Spruce.waterToSprout << "\n";
-	// cout << "Spruce.waterToGrow is " << Spruce.waterToGrow << "\n";
-	// cout << "Spruce.portionTaken is " << Spruce.portionTaken << "\n";
-	// cout << "Spruce.growRate is " << Spruce.growRate << "\n";
-	// cout << "Spruce.spreadMin is " << Spruce.spreadMin << "\n";
-	// cout << "Spruce.waterToLive is " << Spruce.waterToLive << "\n";
-
-	// cout << "Birch.waterToSprout is " << Birch.waterToSprout << "\n";
-	// cout << "Birch.waterToGrow is " << Birch.waterToGrow << "\n";
-	// cout << "Birch.portionTaken is " << Birch.portionTaken << "\n";
-	// cout << "Birch.growRate is " << Birch.growRate << "\n";
-	// cout << "Birch.spreadMin is " << Birch.spreadMin << "\n";
-	// cout << "Birch.waterToLive is " << Birch.waterToLive << "\n";
-
-	// cout << "Water.diffusion is " << Water.diffusion << "\n";
-	// cout << "Water.evaporation is " << Water.evaporation << "\n";
-
-	// cout << "all set up! \n";
 
 	assert(Water.diffusion <= 1);
 	assert(Water.evaporation < 1);
@@ -144,6 +126,7 @@ void Model::growCell(int x, int y, float speed, State &st)
 			(*next_me).species = 1;
 		}
 	}
+	//TODO: remove this next part, right?
 	RULES species;
 	if (me->species == 1)
 	{
@@ -155,20 +138,10 @@ void Model::growCell(int x, int y, float speed, State &st)
 		species = Birch;
 		// stats = &(st->birch);
 	}
-	// cout << "BEGIN!\n";
-	// cout << "birch sprout is " << st.birch.sprout << "\n";
-	// cout << "spruce sprout is " << st.spruce.sprout << "\n";
-	// cout << "birch is at " << &(st.birch) << "\n";
-	// cout << "spruce is at " << &(st.spruce) << "\n";
-	// cout << "stats points to " << stats << "\n";
-	// cout << "sprout is " << stats->sprout << "\n";
-	// cout << "grow is " << stats->grow << "\n";
-	// cout << "die is " << stats->die << "\n";
-	// cout << "light is " << stats->light << "\n";
-	// cout << "GROWING!\n";
+
 	float lit = 0;
 	float grow = 0;
-	if ((*next_me).species != 0)
+	if ((*next_me).species != 0) // If cell is a tree
 	{
 		float sound_offset = float(width - x + y) / (width + height - 2);
 		//float sound_offset = .5;
@@ -184,9 +157,11 @@ void Model::growCell(int x, int y, float speed, State &st)
 			stats = &(st.birch);
 			species = Birch;
 		}
+		// Lighting on fire
 		if (me->isATree() && fire > Fire.spreadMin * me->height)
 		{
 			(*next_me).water -= Fire.dryAmount;
+			// First dry, then light on fire.
 			if ((*next_me).water <= species.waterToLive)
 			{
 				(*next_me).on_fire = true;
@@ -210,20 +185,16 @@ void Model::growCell(int x, int y, float speed, State &st)
 		}
 		else if (grow == -1.f)
 		{
-			// cout << "die is " << stats->die << "\n";
 			stats->right.die += 1. - sound_offset;
 			stats->left.die += sound_offset;
-			// cout << "after die is " << stats->die << "\n";
+			// cout << "die is " << stats->right.die + stats->left.die << "\n";
 		}
 		else
 		{
-			// cout << "grow is " << stats->grow << "\n";
 			//stats->grow += grow;
 			stats->right.grow += (1. - sound_offset) * grow;
 			stats->left.grow += (sound_offset)*grow;
-			// cout << "after grow is " << stats->grow << "\n";
-			// cout << "now birch grow is " << st.birch.grow << "\n";
-			// cout << "now spruce grow is " << st.spruce.grow << "\n";
+			// cout << "grow is " << stats->right.grow + stats->left.grow << "\n";
 		}
 	}
 	// godot::Array outArray;
@@ -284,7 +255,7 @@ godot::Variant Model::growAll()
 float waterGiven, waterTaken, dirtGiven, dirtTaken, dirtErode, dirtDeposit;
 float totalWater;
 
-void Model::printTotals()
+void Model::printTotals() // Helpful for debugging
 {
 	float water = 0;
 	float dirt = 0;

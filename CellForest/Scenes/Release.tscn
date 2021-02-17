@@ -17,17 +17,11 @@
 anchor_right = 1.0
 margin_left = 512.0
 margin_top = 230.0
-margin_right = 511.0
+margin_right = 512.0
+margin_bottom = 230.0
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
-}
-ROWS = 50
-COLUMNS = 50
-FIRE = {
-"dryAmount": 0.2,
-"extinguishChance": 0.0,
-"spreadMin": 0.1
 }
 
 [node name="Piper" type="Node" parent="Forest"]
@@ -43,13 +37,11 @@ texture = ExtResource( 3 )
 script = ExtResource( 4 )
 
 [node name="MenuFrame" type="CenterContainer" parent="."]
-editor/display_folded = true
 margin_right = 1024.0
 margin_bottom = 600.0
 theme = ExtResource( 5 )
 
 [node name="Menu" type="PanelContainer" parent="MenuFrame"]
-editor/display_folded = true
 visible = false
 margin_left = 505.0
 margin_top = 293.0
@@ -64,7 +56,6 @@ margin_right = 206.0
 margin_bottom = 475.0
 
 [node name="Vol" type="HBoxContainer" parent="MenuFrame/Menu/VBoxContainer"]
-editor/display_folded = true
 margin_right = 199.0
 margin_bottom = 55.0
 alignment = 1
@@ -238,7 +229,6 @@ Special thanks to Catherine Harris and the Computational Ecologies class.
 
 * I chose this ecosystem because of its relative simplicity and the fact that it is adapted to fire.  In more complex ecosystems that are not adapted to dealing with regular disturbance, such as the Amazon rainforest, succession can include countless native and introduced tree species and take many hundreds of years, and the original species composition may never be regained. This game does not endorse lighting fire in any actual forest, or for that matter, digging pits or building mounds. Do so at entirely your own risk.
 "
-
 [connection signal="value_changed" from="MenuFrame/Menu/VBoxContainer/Vol/HSlider" to="Forest" method="setVolume"]
 [connection signal="toggled" from="MenuFrame/Menu/VBoxContainer/CheckBox" to="Forest" method="showLooping"]
 [connection signal="pressed" from="MenuFrame/Menu/VBoxContainer/FullScreen" to="Forest" method="toggleFullscreen"]

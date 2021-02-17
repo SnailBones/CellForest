@@ -1,0 +1,18 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/gdlibrary.obj-d0be0d5cd7ad6ef02bdb1447d4802cab.mesh"
+
+[deps]
+
+files=[ "res://.import/gdlibrary.obj-d0be0d5cd7ad6ef02bdb1447d4802cab.mesh" ]
+
+source_file="res://src/gdlibrary.obj"
+dest_files=[ "res://.import/gdlibrary.obj-d0be0d5cd7ad6ef02bdb1447d4802cab.mesh", "res://.import/gdlibrary.obj-d0be0d5cd7ad6ef02bdb1447d4802cab.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+optimize_mesh=true

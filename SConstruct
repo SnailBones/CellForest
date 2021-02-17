@@ -87,10 +87,9 @@ elif env['platform'] in ('x11', 'linux'):
     cpp_library += '.linux'
     if env['target'] in ('debug', 'd'):
         env.Append(CCFLAGS=['-fPIC', '-g3', '-Og'])
-        env.Append(CXXFLAGS=['-std=c++17'])
     else:
         env.Append(CCFLAGS=['-fPIC', '-g', '-O3'])
-        # env.Append(CXXFLAGS=['-std=c++17'])
+    env.Append(CXXFLAGS=['-std=c++17'])
 
 
 elif env['platform'] == "windows":
@@ -104,22 +103,26 @@ elif env['platform'] == "windows":
     env.Append(CPPDEFINES=['WIN32', '_WIN32',
                            '_WINDOWS', '_CRT_SECURE_NO_WARNINGS'])
     env.Append(CCFLAGS=['-W3', '-GR'])
+    # MD needs the runtime libraries as a DLL, MT (and MTd) includes them as a static library.
+    # This needs to be consistent with the way that godot-cpp is compiled.
     if env['target'] in ('debug', 'd'):
         env.Append(CPPDEFINES=['_DEBUG'])
-        env.Append(CCFLAGS=['-EHsc', '-MDd', '-ZI'])
+        # env.Append(CCFLAGS=['-EHsc', '-MDd', '-ZI'])
+        env.Append(CCFLAGS=['-EHsc', '-MTd', '-ZI'])
         env.Append(LINKFLAGS=['-DEBUG'])
     else:
         env.Append(CPPDEFINES=['NDEBUG'])
-        env.Append(CCFLAGS=['-O2', '-EHsc', '-MD'])
+        # env.Append(CCFLAGS=['-O2', '-EHsc', '-MD'])
+        env.Append(CCFLAGS=['-O2', '-EHsc', '-MT'])
 
 if env['target'] in ('debug', 'd'):
     cpp_library += '.debug'
 else:
     cpp_library += '.release'
 
-# that's not what it's called
-# cpp_library += '.' + str(bits)
-cpp_library += '.default'
+cpp_library += '.' + str(bits)
+# For windows change the above line to this, or change the name of the file:
+# cpp_library += '.default'
 
 # make sure our binding library is properly includes
 env.Append(CPPPATH=['.', godot_headers_path, cpp_bindings_path + 'include/',
@@ -131,8 +134,9 @@ env.Append(LIBS=[cpp_library])
 env.Append(CPPPATH=['src/'])
 sources = Glob('src/*.cpp')
 
-env.Append(CXXFLAGS='/std:c++latest')
+# env.Append(CXXFLAGS='/std:c++latest')
 # Neccesary for functions like std::clamp
+# env.Append(CXXFLAGS='/std:c++14')
 
 library = env.SharedLibrary(
     target=env['target_path'] + env['target_name'], source=sources)

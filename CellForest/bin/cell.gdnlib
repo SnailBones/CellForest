@@ -1,0 +1,21 @@
+[general]
+
+singleton=false
+load_once=true
+symbol_prefix="godot_"
+#reloadable=false
+#seethenewproperties.usewithcarereloadable=true
+reloadable=true
+
+[entry]
+
+X11.64="res://bin/x11/libcell.so"
+Windows.64="res://bin/win64/cell.dll"
+OSX.64="res://bin/osx/libcell.dylib"
+#Windows.64="res://bin/win64/libgdexample.dll"
+
+[dependencies]
+
+X11.64=[  ]
+Windows.64=[  ]
+OSX.64=[  ]
