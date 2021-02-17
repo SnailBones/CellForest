@@ -4,10 +4,6 @@
 
 [resource]
 resource_name = "cell"
-<<<<<<< HEAD
-=======
-# class_name = "GDExample"
->>>>>>> 4b814da0e572718048e7c11c0626a1c358e945f4
 class_name = "Grid"
 library = ExtResource( 1 )
 
