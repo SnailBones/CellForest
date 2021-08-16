@@ -247,11 +247,8 @@ func draw_birch(me, height, color, flip): #height in pixels
 func draw_grid(me, height, color):
 	var x = me.x
 	var y = me.y
-	var left = Vector2(me.x-height, me.y)
 	var right = Vector2(me.x+height, me.y)
 	var top = Vector2(me.x, me.y+height/2)
-	var bottom = Vector2(me.x, me.y-height/2)
-	# draw_line(left, top, color, LW)
 	draw_line(top, right, color, LW)
 	# draw_line(right, bottom, color, LW)
 	# draw_line(bottom, left, color, LW)

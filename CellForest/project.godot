@@ -8,16 +8,6 @@
 
 config_version=4
 
-_global_script_classes=[ {
-"base": "Node",
-"class": "Array2D",
-"language": "GDScript",
-"path": "res://Scripts/2dArray.gd"
-} ]
-_global_script_class_icons={
-"Array2D": ""
-}
-
 [application]
 
 config/name="Cells"
@@ -47,7 +37,10 @@ toggle_menu={
  ]
 }
 
+[logging]
+
+file_logging/enable_file_logging=true
+
 [rendering]
 
 environment/default_clear_color=Color( 0.0976563, 0.0602722, 0.0900626, 1 )
-environment/default_environment="res://default_env.tres"
