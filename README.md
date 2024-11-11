@@ -1,11 +1,11 @@
-# CellForest
+# A Tree Falls: the musical.
 
-A cellular automata biological and geological simulation in C++ and Godot. It also plays music. Download the game [here](https://ailanthus.itch.io/forest).
+A cellular automata-powered ecological and geological simulation in C++ and Godot that plays live, procedurally generated music. Download the game [here](https://ailanthus.itch.io/forest).
 
 <img src="img/demo.gif">
 
 # Setup
-If you'd just like to play the game, use the link above. If for some inconceivable reason you'd like to build it from source, proceed with caution! Since the simulation is programmed in C++ as a GDNative module, setup is a bit hairier than a pure Godot game. I've tested it on Windows, MacOS, and Ubuntu. Here's the steps:
+If for some inconceivable reason you'd like to build the game from source, here's instructions. Since the simulation is programmed in C++ as a GDNative module, setup is a hairier than a pure Godot game. But I've pulled it off on Windows, MacOS, and Ubuntu. Here's the steps:
 * Dowload or clone this repository.
 * Pull the [godot-cpp source](https://github.com/GodotNativeTools/godot-cpp) with `git submodule update --init --recursive`
 * Consult the [official Godot documentation](https://docs.godotengine.org/en/stable/tutorials/plugins/gdnative/gdnative-cpp-example.html) to set up additional dependencies for your operating system.
