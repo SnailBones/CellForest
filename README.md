@@ -1,4 +1,4 @@
-# A Tree Falls: the musical.
+# A Tree Falls: The Musical
 
 A cellular automata-powered ecological and geological simulation in C++ and Godot that plays live, procedurally generated music. Download the game [here](https://ailanthus.itch.io/forest).
 
